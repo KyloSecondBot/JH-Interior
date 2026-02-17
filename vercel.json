@@ -1,0 +1,13 @@
+{
+  "name": "jh-interior",
+  "buildCommand": "cd client && npm ci && npm run build",
+  "outputDirectory": "client/dist",
+  "installCommand": "cd client && npm ci",
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

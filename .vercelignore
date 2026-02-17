@@ -1,0 +1,14 @@
+# Root dependencies
+node_modules/
+
+# Client dependencies and build artifacts
+client/node_modules/
+client/dist/
+
+# IDE and editor files
+.vscode/
+.claude/
+
+# Misc
+.mcp.json
+*.log
