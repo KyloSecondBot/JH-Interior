@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import SocialLinks from './SocialLinks.jsx';
-import logo from '../assets/jh-logo.jpeg';
+import logo from '../assets/jh-logo.webp';
 
 const links = [
   { label: 'Portfolio', href: '#portfolio' },
