@@ -20,7 +20,7 @@ const spotlights = [
     title: "Halo Suites",
     location: "Seoul / Boutique Hospitality",
     overlay: "from-indigo-950/80 via-slate-900/75 to-black/90",
-    accent: "bg-amber-300/80",
+    accent: "bg-white/55",
     img: img21,
     summary:
       "Signature suites with luminous arches, gallery-grade art rotations, and choreographed lighting scenes.",
@@ -32,8 +32,8 @@ const spotlights = [
   {
     title: "Sands Members Club",
     location: "Dubai / Private Lounge",
-    overlay: "from-amber-950/80 via-slate-900/75 to-black/90",
-    accent: "bg-cyan-300/80",
+    overlay: "from-slate-900/80 via-slate-800/75 to-black/90",
+    accent: "bg-white/55",
     img: img11,
     summary: "Molten brass detailing, kinetic textiles, and ambient sound that adapts to guest density.",
     metricLabel: "Membership growth",
@@ -45,7 +45,7 @@ const spotlights = [
     title: "Cove Duplex",
     location: "TriBeCa / Residential",
     overlay: "from-slate-900/80 via-slate-800/75 to-black/90",
-    accent: "bg-emerald-400/70",
+    accent: "bg-white/55",
     img: img12,
     summary: "Stone planes, hidden light seams, and sculpted millwork for a cinematic two-level loft.",
     metricLabel: "Install timeline",
@@ -60,7 +60,7 @@ const gallery = [
   { title: "Quiet Offices", tone: "from-slate-800/60 via-slate-900/50 to-slate-950/70", caption: "Acoustic focus suites", img: img23 },
   { title: "Lumen Residences", tone: "from-slate-900/60 via-slate-800/50 to-slate-950/70", caption: "Soft metallic gradients", img: img24 },
   { title: "Halo Lobby", tone: "from-indigo-900/60 via-slate-900/50 to-black/70", caption: "Arrival choreography", img: img26 },
-  { title: "Skyline Penthouse", tone: "from-slate-900/60 via-emerald-900/40 to-black/70", caption: "Mirror void gallery", img: img27 },
+  { title: "Skyline Penthouse", tone: "from-slate-900/60 via-slate-800/40 to-black/70", caption: "Mirror void gallery", img: img27 },
   { title: "The Residences", tone: "from-slate-950/60 via-slate-800/50 to-slate-900/70", caption: "Full-floor living", img: img28 },
 ];
 
@@ -79,12 +79,12 @@ export default function Portfolio() {
             className="absolute inset-0 opacity-50"
             style={{
               backgroundImage:
-                "radial-gradient(circle at 20% 30%, rgba(94,234,212,0.18), transparent 40%), radial-gradient(circle at 80% 20%, rgba(251,191,36,0.14), transparent 38%), radial-gradient(circle at 60% 75%, rgba(56,189,248,0.14), transparent 42%)",
+                "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08), transparent 40%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05), transparent 38%), radial-gradient(circle at 60% 75%, rgba(255,255,255,0.06), transparent 42%)",
             }}
           />
           <div className="relative grid gap-8 lg:grid-cols-[1.1fr,0.9fr]" id="portfolio-product">
             <div className="space-y-5">
-              <p className="text-xs uppercase tracking-[0.3em] text-emerald-100/70">Portfolio / Product</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-white/50">Portfolio / Product</p>
               <h2 className="text-3xl font-semibold text-white sm:text-4xl">A cinematic product pipeline for interiors.</h2>
               <p className="max-w-2xl text-slate-200/80">
                 Every space ships like software: motion prototypes, fabrication packs, procurement cloud, and on-site
@@ -98,7 +98,7 @@ export default function Portfolio() {
               <div className="relative h-full rounded-3xl border border-white/10 bg-white/5 px-6 py-6">
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-emerald-100/80">Product chassis</p>
+                    <p className="text-sm font-semibold text-white/60">Product chassis</p>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">24/7 Studio</span>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-3">
@@ -109,7 +109,7 @@ export default function Portfolio() {
                   <div className="grid gap-3 sm:grid-cols-3">
                     {modules.map((mod) => (
                       <div key={mod.title} className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                        <p className="text-xs uppercase tracking-[0.2em] text-emerald-100/70">{mod.title}</p>
+                        <p className="text-xs uppercase tracking-[0.2em] text-white/50">{mod.title}</p>
                         <p className="mt-1 text-sm text-slate-200/85">{mod.desc}</p>
                       </div>
                     ))}
@@ -122,7 +122,7 @@ export default function Portfolio() {
 
         <div className="space-y-4">
           <div className="flex flex-col gap-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-emerald-100/70">Signature Cases</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-white/50">Signature Cases</p>
             <h3 className="text-2xl font-semibold text-white sm:text-3xl">Where the product lives.</h3>
           </div>
           <div className="grid gap-6 lg:grid-cols-3">
@@ -155,7 +155,7 @@ export default function Portfolio() {
                       <h3 className="text-xl font-semibold text-white">{project.title}</h3>
                       <p className="text-sm text-slate-200/80">{project.summary}</p>
                       <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                        <span className="rounded-full bg-white/10 px-2 py-1 text-xs text-emerald-100/90">
+                        <span className="rounded-full bg-white/10 px-2 py-1 text-xs text-white/70">
                           {project.metricLabel}
                         </span>
                         <span className="text-lg">
@@ -217,7 +217,7 @@ function GalleryCarousel() {
     >
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-emerald-100/70">Gallery Rail</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-white/50">Gallery Rail</p>
           <h3 className="text-2xl font-semibold text-white sm:text-3xl">Motion proofs and material studies.</h3>
         </div>
         <AnimatedGradientText className="hidden text-sm font-semibold sm:block">
@@ -259,7 +259,7 @@ function GalleryCarousel() {
             onClick={() => api?.scrollTo(i)}
             className={`rounded-full transition-all duration-300 ${
               i === current
-                ? "w-5 h-1.5 bg-emerald-400"
+                ? "w-5 h-1.5 bg-white"
                 : "w-1.5 h-1.5 bg-white/20 hover:bg-white/40"
             }`}
             aria-label={`Go to slide ${i + 1}`}
@@ -273,10 +273,10 @@ function GalleryCarousel() {
 function Metric({ label, value, suffix }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-white">
-      <p className="text-xs uppercase tracking-[0.25em] text-emerald-100/70">{label}</p>
+      <p className="text-xs uppercase tracking-[0.25em] text-white/50">{label}</p>
       <p className="mt-2 text-3xl font-semibold">
         <CountUp to={value} duration={1.4} />
-        {suffix ? <span className="text-emerald-200/80">{suffix}</span> : null}
+        {suffix ? <span className="text-white/60">{suffix}</span> : null}
       </p>
     </div>
   );

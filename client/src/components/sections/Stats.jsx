@@ -15,7 +15,7 @@ export default function Stats() {
       <div className="mx-auto max-w-6xl rounded-[32px] border border-white/10 bg-white/5 px-6 py-10 shadow-[0_20px_60px_rgba(0,0,0,0.35)] sm:px-10">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-emerald-100/70">Operational Studio</p>
+            <p className="text-xs uppercase tracking-[0.28em] text-white/50">Operational Studio</p>
             <h2 className="mt-3 text-3xl font-semibold text-white">Interiors as a measurable product.</h2>
             <p className="mt-3 max-w-2xl text-slate-200/80">
               We fuse strategy, visualization, procurement, and install into a single subscription. Every surface is modeled,
@@ -36,7 +36,7 @@ export default function Stats() {
             >
               <div className="text-4xl font-semibold text-white">
                 <CountUp to={item.value} duration={1.8} />
-                {item.suffix ? <span className="text-emerald-200/80">{item.suffix}</span> : null}
+                {item.suffix ? <span className="text-white/60">{item.suffix}</span> : null}
               </div>
               <p className="mt-2 text-sm text-slate-300/80">{item.label}</p>
             </motion.div>

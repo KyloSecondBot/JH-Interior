@@ -13,9 +13,9 @@ const projects = [
     metric: '+38% ADR',
     metricLabel: 'average daily rate lift',
     palette: 'from-[#0e1020] via-[#1a1440] to-[#0b0e1a]',
-    accent: 'text-amber-300',
-    tag: 'bg-amber-400/10 text-amber-300 border-amber-400/20',
-    bar: 'bg-gradient-to-r from-amber-400 to-orange-400',
+    accent: 'text-white/80',
+    tag: 'bg-white/10 text-white/75 border-white/20',
+    bar: 'bg-gradient-to-r from-white/60 to-slate-300/40',
   },
   {
     index: '02',
@@ -27,9 +27,9 @@ const projects = [
     metric: '+54%',
     metricLabel: 'membership growth in year one',
     palette: 'from-[#120d08] via-[#1e1408] to-[#0f0d0a]',
-    accent: 'text-cyan-300',
-    tag: 'bg-cyan-400/10 text-cyan-300 border-cyan-400/20',
-    bar: 'bg-gradient-to-r from-cyan-400 to-teal-400',
+    accent: 'text-white/75',
+    tag: 'bg-white/10 text-white/70 border-white/20',
+    bar: 'bg-gradient-to-r from-white/50 to-slate-400/35',
   },
   {
     index: '03',
@@ -41,9 +41,9 @@ const projects = [
     metric: '9 wks',
     metricLabel: 'brief to white-glove handover',
     palette: 'from-[#0a1410] via-[#0d1c14] to-[#080f0c]',
-    accent: 'text-emerald-300',
-    tag: 'bg-emerald-400/10 text-emerald-300 border-emerald-400/20',
-    bar: 'bg-gradient-to-r from-emerald-400 to-cyan-400',
+    accent: 'text-white/75',
+    tag: 'bg-white/10 text-white/70 border-white/20',
+    bar: 'bg-gradient-to-r from-white/55 to-slate-300/40',
   },
   {
     index: '04',
@@ -55,9 +55,9 @@ const projects = [
     metric: '100%',
     metricLabel: 'occupancy at soft launch',
     palette: 'from-[#08101a] via-[#0e1824] to-[#070e18]',
-    accent: 'text-sky-300',
-    tag: 'bg-sky-400/10 text-sky-300 border-sky-400/20',
-    bar: 'bg-gradient-to-r from-sky-400 to-indigo-400',
+    accent: 'text-white/75',
+    tag: 'bg-white/10 text-white/70 border-white/20',
+    bar: 'bg-gradient-to-r from-white/50 to-slate-400/30',
   },
 ];
 
@@ -72,7 +72,7 @@ export default function WorkStack() {
         transition={{ duration: 0.55 }}
         className="mx-auto max-w-6xl px-6 pb-4"
       >
-        <p className="text-xs uppercase tracking-[0.3em] text-emerald-100/70">Signature Work</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-white/50">Signature Work</p>
         <div className="mt-2 flex items-end justify-between">
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">
             Projects that{' '}

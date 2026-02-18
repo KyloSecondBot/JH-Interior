@@ -41,9 +41,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="inline-flex w-fit items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300/80"
+            className="inline-flex w-fit items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-white/60"
           >
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
             Interior Design Studio · Est. 1999  
           </motion.div>
 
@@ -58,7 +58,7 @@ export default function Hero() {
                   transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay: i * 0.11 }}
                 >
                   {accent ? (
-                    <span className="font-display italic text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-cyan-300 to-amber-200">
+                    <span className="font-display italic text-transparent bg-clip-text bg-gradient-to-r from-slate-200 via-white to-slate-300">
                       {text}
                     </span>
                   ) : (
@@ -90,7 +90,7 @@ export default function Hero() {
           >
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 px-7 py-3.5 text-sm font-bold text-slate-950 shadow-[0_0_40px_rgba(52,211,153,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_60px_rgba(52,211,153,0.55)]"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-slate-100 via-white to-slate-200 px-7 py-3.5 text-sm font-bold text-slate-950 shadow-[0_0_40px_rgba(255,255,255,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_60px_rgba(255,255,255,0.28)]"
             >
               Book a Consultation
               <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -153,7 +153,7 @@ export default function Hero() {
               transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
             >
               <div className="rounded-2xl border border-white/15 bg-slate-950/65 px-3.5 py-2.5 backdrop-blur-md">
-                <p className="text-xs font-semibold text-emerald-300">Luxury Residence</p>
+                <p className="text-xs font-semibold text-white/70">Luxury Residence</p>
                 <p className="mt-0.5 text-[11px] text-slate-300/70">Jakarta · Completed 2025</p>
               </div>
             </motion.div>
@@ -172,7 +172,7 @@ export default function Hero() {
               className="h-full w-full object-cover"
               loading="lazy"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-emerald-500/10 via-transparent to-slate-950/45" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-slate-950/45" />
           </motion.div>
 
           {/* Card 3 — bottom right */}
@@ -201,8 +201,8 @@ export default function Hero() {
           </motion.div>
 
           {/* Ambient glow orbs */}
-          <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-emerald-500/12 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-16 -left-8 h-52 w-52 rounded-full bg-cyan-500/10 blur-3xl" />
+          <div className="pointer-events-none absolute -right-16 -top-16 h-72 w-72 rounded-full bg-white/5 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-16 -left-8 h-52 w-52 rounded-full bg-slate-300/6 blur-3xl" />
         </div>
       </div>
 
@@ -238,7 +238,7 @@ export default function Hero() {
           <span className="text-[10px] uppercase tracking-[0.3em]">Scroll</span>
           <div className="h-10 w-px overflow-hidden rounded-full bg-white/10">
             <motion.div
-              className="h-full w-full bg-gradient-to-b from-emerald-400/70 to-transparent"
+              className="h-full w-full bg-gradient-to-b from-white/60 to-transparent"
               animate={reduce ? {} : { y: ['-100%', '100%'] }}
               transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
             />

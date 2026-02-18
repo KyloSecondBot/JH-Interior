@@ -53,7 +53,7 @@ export default function Contact() {
 
         {/* ── Header ── */}
         <motion.div {...fadeUp(0)}>
-          <p className="text-xs uppercase tracking-[0.3em] text-emerald-100/70">Contact Us</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-white/50">Contact Us</p>
           <div className="mt-2 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <h2 className="text-3xl font-semibold text-white sm:text-4xl">
               Let's start a conversation.
@@ -71,7 +71,7 @@ export default function Contact() {
             className="relative overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-br from-white/8 via-white/4 to-white/0 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
           >
             {/* Ambient glow */}
-            <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-emerald-500/10 blur-3xl" />
+            <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-white/5 blur-3xl" />
 
             <div className="relative flex flex-col gap-7">
               {/* Address */}
@@ -81,13 +81,13 @@ export default function Contact() {
                 rel="noreferrer"
                 className="group flex items-start gap-4 text-slate-300/80 transition hover:text-white"
               >
-                <span className="mt-0.5 text-emerald-400">
+                <span className="mt-0.5 text-white/60">
                   <IconLocation />
                 </span>
                 <div>
                   <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">Office Address</p>
                   <p className="text-sm leading-relaxed">{ADDRESS}</p>
-                  <p className="mt-1.5 text-[11px] font-semibold text-emerald-400/70 transition group-hover:text-emerald-400">
+                  <p className="mt-1.5 text-[11px] font-semibold text-white/45 transition group-hover:text-white/80">
                     Open in Google Maps →
                   </p>
                 </div>
@@ -100,7 +100,7 @@ export default function Contact() {
                 href={`mailto:${EMAIL}`}
                 className="group flex items-center gap-4 text-slate-300/80 transition hover:text-white"
               >
-                <span className="text-emerald-400">
+                <span className="text-white/60">
                   <IconMail />
                 </span>
                 <div>
@@ -116,7 +116,7 @@ export default function Contact() {
                 href={`tel:+62${PHONE_DISPLAY.replace(/-/g, '').slice(1)}`}
                 className="group flex items-center gap-4 text-slate-300/80 transition hover:text-white"
               >
-                <span className="text-emerald-400">
+                <span className="text-white/60">
                   <IconPhone />
                 </span>
                 <div>
@@ -154,7 +154,7 @@ export default function Contact() {
           >
             {/* Overlay label */}
             <div className="pointer-events-none absolute left-4 top-4 z-10 rounded-xl border border-white/15 bg-slate-950/75 px-3.5 py-2 backdrop-blur-md">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-emerald-300">Studio Location</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70">Studio Location</p>
               <p className="mt-0.5 text-xs text-slate-300/70">Tigaraksa, Tangerang</p>
             </div>
 

@@ -71,7 +71,7 @@ export default function About() {
           viewport={{ once: true, margin: '-10%' }}
           transition={{ duration: 0.55 }}
         >
-          <p className="text-xs uppercase tracking-[0.3em] text-emerald-100/70">About JH Interior</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-white/50">About JH Interior</p>
           <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <h2 className="max-w-xl text-3xl font-semibold text-white sm:text-4xl">
               Indonesia's leading design &amp; build interior company.
@@ -87,7 +87,7 @@ export default function About() {
             className="pointer-events-none absolute inset-0 opacity-40"
             style={{
               backgroundImage:
-                'radial-gradient(circle at 15% 40%, rgba(52,211,153,0.15), transparent 40%), radial-gradient(circle at 85% 20%, rgba(251,191,36,0.1), transparent 38%)',
+                'radial-gradient(circle at 15% 40%, rgba(255,255,255,0.07), transparent 40%), radial-gradient(circle at 85% 20%, rgba(255,255,255,0.04), transparent 38%)',
             }}
           />
 
@@ -105,7 +105,7 @@ export default function About() {
                 the demand for <span className="font-semibold text-white">luxury home interiors</span>.
               </p>
               <p className="text-base leading-relaxed text-slate-300/70">
-                With more than <span className="font-semibold text-emerald-300">200 highly skilled personnel</span> and
+                With more than <span className="font-semibold text-white">200 highly skilled personnel</span> and
                 nationwide services, we are committed to transforming every space into an experience that endures —
                 from concept and material selection through fabrication, installation, and final styling.
               </p>
@@ -133,7 +133,7 @@ export default function About() {
                   transition={{ duration: 0.45, delay: 0.1 + i * 0.07 }}
                   className="group flex flex-col gap-3 border-white/8 bg-white/3 p-6 transition hover:bg-white/6 [&:nth-child(odd)]:border-r [&:nth-child(-n+2)]:border-b"
                 >
-                  <span className="text-emerald-300/80 transition group-hover:text-emerald-300">
+                  <span className="text-white/50 transition group-hover:text-white">
                     {p.icon}
                   </span>
                   <div>

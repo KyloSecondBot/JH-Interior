@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 
 const blobs = [
-  { color: 'from-amber-500/25 via-orange-500/15 to-transparent', size: 'h-[420px] w-[420px]', x: 12, y: 8 },
-  { color: 'from-cyan-500/25 via-teal-400/15 to-transparent', size: 'h-[520px] w-[520px]', x: 60, y: 12 },
-  { color: 'from-fuchsia-500/20 via-pink-500/12 to-transparent', size: 'h-[380px] w-[380px]', x: 32, y: 60 },
+  { color: 'from-slate-400/15 via-slate-500/8 to-transparent', size: 'h-[420px] w-[420px]', x: 12, y: 8 },
+  { color: 'from-blue-200/10 via-slate-300/6 to-transparent', size: 'h-[520px] w-[520px]', x: 60, y: 12 },
+  { color: 'from-white/8 via-slate-200/5 to-transparent', size: 'h-[380px] w-[380px]', x: 32, y: 60 },
 ];
 
 export default function AuroraBackground() {

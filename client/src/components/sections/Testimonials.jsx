@@ -19,7 +19,7 @@ export default function Testimonials() {
     <section className="px-6">
       <div className="mx-auto max-w-6xl space-y-6">
         <div className="flex flex-col gap-2">
-          <p className="text-xs uppercase tracking-[0.3em] text-emerald-100/70">Voices</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-white/50">Voices</p>
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">Partners who move fast with us.</h2>
         </div>
         <div className="grid gap-5 md:grid-cols-2">

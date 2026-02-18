@@ -59,7 +59,7 @@ export default function NavBar() {
               <a
                 key={link.href}
                 href={link.href}
-                className="transition hover:text-white hover:drop-shadow-[0_0_12px_rgba(94,234,212,0.8)]"
+                className="transition hover:text-white hover:drop-shadow-[0_0_12px_rgba(255,255,255,0.5)]"
               >
                 {link.label}
               </a>
@@ -71,7 +71,7 @@ export default function NavBar() {
             <SocialLinks />
             <a
               href="#contact"
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 px-4 py-2 text-slate-900 text-sm font-semibold shadow-[0_10px_40px_rgba(16,185,129,0.35)] transition hover:-translate-y-[1px] sm:text-base"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-slate-950 text-sm font-semibold shadow-[0_10px_40px_rgba(255,255,255,0.12)] transition hover:-translate-y-[1px] sm:text-base"
             >
               Book a Call
             </a>
@@ -137,7 +137,7 @@ export default function NavBar() {
                 <a
                   href="#contact"
                   onClick={closeMenu}
-                  className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 py-3 text-slate-900 text-sm font-semibold shadow-[0_6px_24px_rgba(16,185,129,0.3)] transition hover:-translate-y-[1px]"
+                  className="flex w-full items-center justify-center rounded-2xl bg-white py-3 text-slate-950 text-sm font-semibold shadow-[0_6px_24px_rgba(255,255,255,0.1)] transition hover:-translate-y-[1px]"
                 >
                   Book a Call
                 </a>

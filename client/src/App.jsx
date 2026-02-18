@@ -17,7 +17,7 @@ export default function App() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-slate-950 text-slate-50">
       <AuroraBackground />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(16,185,129,0.12),transparent_35%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.05),transparent_35%)]" />
       <div className="absolute inset-x-0 top-[120px] h-px bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-50" />
       <div className="relative z-10">
         <NavBar />

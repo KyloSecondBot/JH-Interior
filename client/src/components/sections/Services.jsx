@@ -21,7 +21,7 @@ export default function Services() {
     <section id="services" className="px-6">
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex flex-col gap-3">
-          <p className="text-xs uppercase tracking-[0.3em] text-emerald-100/70">Offering</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-white/50">Offering</p>
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">Everything required to deliver emotive spaces.</h2>
           <p className="max-w-3xl text-slate-200/80">
             One team to own the entire pipeline: concept, animation, procurement, and install. Subscribe to a live interior
@@ -42,12 +42,12 @@ export default function Services() {
                 <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-6">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-semibold text-white">{service.title}</h3>
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-emerald-300 via-cyan-300 to-amber-200 opacity-90" />
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-white via-slate-200 to-white/80 opacity-80" />
                   </div>
                   <ul className="space-y-2 text-sm text-slate-200/85">
                     {service.bullet.map((line) => (
                       <li key={line} className="flex items-start gap-2">
-                        <span className="mt-[6px] h-2 w-2 rounded-full bg-emerald-300" />
+                        <span className="mt-[6px] h-2 w-2 rounded-full bg-white/50" />
                         <span>{line}</span>
                       </li>
                     ))}
