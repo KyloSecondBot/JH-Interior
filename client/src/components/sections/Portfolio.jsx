@@ -5,12 +5,23 @@ import AnimatedGradientText from "../reactbits/AnimatedGradientText.jsx";
 import CountUp from "../reactbits/CountUp.jsx";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
+import img11 from "../../assets/1.1.webp";
+import img12 from "../../assets/1.2.webp";
+import img21 from "../../assets/2.1.webp";
+import img22 from "../../assets/2.2.webp";
+import img23 from "../../assets/2.3.webp";
+import img24 from "../../assets/2.4.webp";
+import img26 from "../../assets/2.6.webp";
+import img27 from "../../assets/2.7.webp";
+import img28 from "../../assets/2.8.webp";
+
 const spotlights = [
   {
     title: "Halo Suites",
     location: "Seoul / Boutique Hospitality",
-    palette: "from-slate-900 via-indigo-900/60 to-black",
+    overlay: "from-indigo-950/80 via-slate-900/75 to-black/90",
     accent: "bg-amber-300/80",
+    img: img21,
     summary:
       "Signature suites with luminous arches, gallery-grade art rotations, and choreographed lighting scenes.",
     metricLabel: "ADR lift",
@@ -21,8 +32,9 @@ const spotlights = [
   {
     title: "Sands Members Club",
     location: "Dubai / Private Lounge",
-    palette: "from-amber-900/60 via-slate-900 to-black",
+    overlay: "from-amber-950/80 via-slate-900/75 to-black/90",
     accent: "bg-cyan-300/80",
+    img: img11,
     summary: "Molten brass detailing, kinetic textiles, and ambient sound that adapts to guest density.",
     metricLabel: "Membership growth",
     metricValue: 54,
@@ -32,8 +44,9 @@ const spotlights = [
   {
     title: "Cove Duplex",
     location: "TriBeCa / Residential",
-    palette: "from-slate-800 via-slate-700 to-slate-900",
+    overlay: "from-slate-900/80 via-slate-800/75 to-black/90",
     accent: "bg-emerald-400/70",
+    img: img12,
     summary: "Stone planes, hidden light seams, and sculpted millwork for a cinematic two-level loft.",
     metricLabel: "Install timeline",
     metricValue: 9,
@@ -43,11 +56,12 @@ const spotlights = [
 ];
 
 const gallery = [
-  { title: "Drift Spa", tone: "from-slate-950 via-cyan-950/50 to-slate-900", caption: "Vapor glass + ripple light" },
-  { title: "Quiet Offices", tone: "from-slate-800 via-slate-900 to-slate-950", caption: "Acoustic focus suites" },
-  { title: "Lumen Residences", tone: "from-slate-900 via-slate-800 to-slate-950", caption: "Soft metallic gradients" },
-  { title: "Halo Lobby", tone: "from-indigo-900/60 via-slate-900 to-black", caption: "Arrival choreography" },
-  { title: "Skyline Penthouse", tone: "from-slate-900 via-emerald-900/40 to-black", caption: "Mirror void gallery" },
+  { title: "Drift Spa", tone: "from-slate-950/60 via-cyan-950/40 to-slate-900/70", caption: "Vapor glass + ripple light", img: img22 },
+  { title: "Quiet Offices", tone: "from-slate-800/60 via-slate-900/50 to-slate-950/70", caption: "Acoustic focus suites", img: img23 },
+  { title: "Lumen Residences", tone: "from-slate-900/60 via-slate-800/50 to-slate-950/70", caption: "Soft metallic gradients", img: img24 },
+  { title: "Halo Lobby", tone: "from-indigo-900/60 via-slate-900/50 to-black/70", caption: "Arrival choreography", img: img26 },
+  { title: "Skyline Penthouse", tone: "from-slate-900/60 via-emerald-900/40 to-black/70", caption: "Mirror void gallery", img: img27 },
+  { title: "The Residences", tone: "from-slate-950/60 via-slate-800/50 to-slate-900/70", caption: "Full-floor living", img: img28 },
 ];
 
 const modules = [
@@ -121,16 +135,16 @@ export default function Portfolio() {
                 transition={{ duration: 0.55, delay: idx * 0.06 }}
               >
                 <GlareHover>
-                  <div
-                    className={`relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br ${project.palette} px-5 py-6`}
-                  >
-                    <div
-                      className="absolute inset-0 opacity-35"
-                      style={{
-                        backgroundImage:
-                          "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.12), transparent 32%), radial-gradient(circle at 80% 10%, rgba(255,255,255,0.08), transparent 30%), radial-gradient(circle at 60% 80%, rgba(255,255,255,0.12), transparent 38%)",
-                      }}
+                  <div className="relative overflow-hidden rounded-3xl border border-white/10 px-5 py-6">
+                    {/* Real project photo */}
+                    <img
+                      src={project.img}
+                      alt={project.title}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      loading="lazy"
                     />
+                    {/* Gradient overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${project.overlay}`} />
                     <div className="relative flex flex-col gap-3">
                       <div className="flex items-center justify-between">
                         <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
@@ -219,14 +233,18 @@ function GalleryCarousel() {
         <CarouselContent className="-ml-3">
           {gallery.map((item) => (
             <CarouselItem key={item.title} className="pl-3 basis-[75%] sm:basis-[42%] lg:basis-[28%]">
-              <div
-                className={`h-28 rounded-3xl border border-white/10 bg-gradient-to-br ${item.tone} p-4 shadow-[0_10px_40px_rgba(0,0,0,0.35)] transition-all duration-300`}
-              >
-                <div className="flex items-center justify-between">
+              <div className="relative h-40 overflow-hidden rounded-3xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.35)]">
+                <img
+                  src={item.img}
+                  alt={item.title}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  loading="lazy"
+                />
+                <div className={`absolute inset-0 bg-gradient-to-br ${item.tone}`} />
+                <div className="relative flex h-full flex-col justify-end p-4">
                   <p className="text-sm font-semibold text-white">{item.title}</p>
-                  <span className="h-1.5 w-8 rounded-full bg-white/40" />
+                  <p className="mt-0.5 text-xs text-slate-200/75">{item.caption}</p>
                 </div>
-                <p className="mt-2 text-xs text-slate-200/80">{item.caption}</p>
               </div>
             </CarouselItem>
           ))}
