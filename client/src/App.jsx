@@ -5,12 +5,13 @@ import NavBar from "./components/NavBar.jsx";
 import Footer from "./components/Footer.jsx";
 import Hero from "./components/sections/Hero.jsx";
 import Stats from "./components/sections/Stats.jsx";
+import About from "./components/sections/About.jsx";
 import Portfolio from "./components/sections/Portfolio.jsx";
 import WorkStack from "./components/sections/WorkStack.jsx";
 import Services from "./components/sections/Services.jsx";
 import Process from "./components/sections/Process.jsx";
 import Testimonials from "./components/sections/Testimonials.jsx";
-import CTA from "./components/sections/CTA.jsx";
+import Contact from "./components/sections/Contact.jsx";
 
 export default function App() {
   return (
@@ -23,12 +24,13 @@ export default function App() {
         <main className="space-y-20 pb-12 pt-4 sm:space-y-24">
           <Hero />
           <Stats />
+          <About />
           <Portfolio />
           <WorkStack />
           <Services />
           <Process />
           <Testimonials />
-          <CTA />
+          <Contact />
         </main>
         <Footer />
       </div>

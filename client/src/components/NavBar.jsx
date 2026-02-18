@@ -70,7 +70,7 @@ export default function NavBar() {
           <div className="hidden items-center gap-2 sm:flex sm:gap-3">
             <SocialLinks />
             <a
-              href="#cta"
+              href="#contact"
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 px-4 py-2 text-slate-900 text-sm font-semibold shadow-[0_10px_40px_rgba(16,185,129,0.35)] transition hover:-translate-y-[1px] sm:text-base"
             >
               Book a Call
@@ -135,7 +135,7 @@ export default function NavBar() {
 
               <div className="mt-4 border-t border-white/10 pt-4 space-y-3">
                 <a
-                  href="#cta"
+                  href="#contact"
                   onClick={closeMenu}
                   className="flex w-full items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 py-3 text-slate-900 text-sm font-semibold shadow-[0_6px_24px_rgba(16,185,129,0.3)] transition hover:-translate-y-[1px]"
                 >

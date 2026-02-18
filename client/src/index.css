@@ -36,3 +36,33 @@ body {
   animation: marquee 38s linear infinite;
   will-change: transform;
 }
+
+/* ── Press / logo marquee (About section) ── */
+.press-track {
+  animation: marquee 42s linear infinite;
+  will-change: transform;
+}
+
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+.press-track-reverse {
+  animation: marquee-reverse 52s linear infinite;
+  will-change: transform;
+}
+
+/* Press pill card — MCP spring (bounce: 0.3, perceptual dur: 0.35s) */
+.press-pill {
+  transition:
+    transform 700ms linear(0, 0.12, 0.3667, 0.6221, 0.8271, 0.9637, 1.0379, 1.0658,
+                           1.0652, 1.051, 1.0332, 1.0174, 1.006, 0.9992, 0.9961,
+                           1, 0.996, 0.9972, 0.9984, 0.9993, 0.9999, 1, 1),
+    border-color 300ms ease;
+}
+
+.press-pill:hover {
+  transform: translateY(-4px) scale(1.04);
+  border-color: rgba(255, 255, 255, 0.22);
+}

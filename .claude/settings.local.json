@@ -22,7 +22,9 @@
       "Bash(git branch:*)",
       "Bash(git push:*)",
       "Bash(git pull:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "mcp__motion__generate-css-spring",
+      "WebFetch(domain:www.jhinterior.id)"
     ]
   },
   "enableAllProjectMcpServers": true,

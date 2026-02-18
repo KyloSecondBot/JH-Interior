@@ -136,7 +136,7 @@ const CardNav = ({ logo, logoAlt = 'Logo', items = [], ease = 'power3.out' }) =>
 
           {/* CTA — desktop only */}
           <a
-            href="#cta"
+            href="#contact"
             className="hidden md:inline-flex items-center rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 px-4 py-2 text-slate-900 text-sm font-semibold shadow-[0_6px_24px_rgba(16,185,129,0.3)] transition hover:-translate-y-[1px]"
             onClick={() => { if (isExpanded) toggleMenu(); }}
           >
@@ -180,7 +180,7 @@ const CardNav = ({ logo, logoAlt = 'Logo', items = [], ease = 'power3.out' }) =>
 
           {/* Mobile-only: Book a Call full-width */}
           <a
-            href="#cta"
+            href="#contact"
             onClick={toggleMenu}
             className="md:hidden flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 py-3 text-slate-900 text-sm font-semibold shadow-[0_6px_24px_rgba(16,185,129,0.3)] transition hover:opacity-90"
           >

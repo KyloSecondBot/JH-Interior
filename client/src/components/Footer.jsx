@@ -16,7 +16,7 @@ export default function Footer() {
           <a className="transition hover:text-white" href="#services">
             Services
           </a>
-          <a className="transition hover:text-white" href="#cta">
+          <a className="transition hover:text-white" href="#contact">
             Get in touch
           </a>
         </div>

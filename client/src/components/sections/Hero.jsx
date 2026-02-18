@@ -44,7 +44,7 @@ export default function Hero() {
             className="inline-flex w-fit items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-emerald-300/80"
           >
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-            Interior Design Studio · Est. 2018
+            Interior Design Studio · Est. 1999  
           </motion.div>
 
           {/* Headline — clip reveal per line */}
@@ -89,7 +89,7 @@ export default function Hero() {
             className="flex flex-wrap items-center gap-4"
           >
             <a
-              href="#cta"
+              href="#contact"
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-amber-300 px-7 py-3.5 text-sm font-bold text-slate-950 shadow-[0_0_40px_rgba(52,211,153,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_60px_rgba(52,211,153,0.55)]"
             >
               Book a Consultation
@@ -154,7 +154,7 @@ export default function Hero() {
             >
               <div className="rounded-2xl border border-white/15 bg-slate-950/65 px-3.5 py-2.5 backdrop-blur-md">
                 <p className="text-xs font-semibold text-emerald-300">Luxury Residence</p>
-                <p className="mt-0.5 text-[11px] text-slate-300/70">New York · Completed 2024</p>
+                <p className="mt-0.5 text-[11px] text-slate-300/70">Jakarta · Completed 2025</p>
               </div>
             </motion.div>
           </motion.div>
