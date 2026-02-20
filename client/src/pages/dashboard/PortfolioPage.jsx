@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, X, Image as ImageIcon } from 'lucide-react';
+import { Plus, X, Image as ImageIcon, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import DataTable from '../../components/dashboard/DataTable';
 import ImageUploader from '../../components/dashboard/ImageUploader';
@@ -69,8 +69,114 @@ function Tab({ active, onClick, children }) {
   );
 }
 
+/* ── Project Photos sub-section ── */
+const MAX_PHOTOS = 12;
+
+function ProjectPhotos({ projectId, photos = [], addPhoto, deletePhoto }) {
+  const [open, setOpen] = useState(false);
+  const [newUrl, setNewUrl] = useState('');
+  const [newCaption, setNewCaption] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+
+  async function handleAdd() {
+    if (!newUrl) return;
+    setSaving(true);
+    setErr(null);
+    try {
+      await addPhoto(projectId, { image_url: newUrl, caption: newCaption, sort_order: photos.length });
+      setNewUrl('');
+      setNewCaption('');
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(id) {
+    setDeletingId(id);
+    try { await deletePhoto(id); }
+    catch (e) { setErr(e.message); }
+    finally { setDeletingId(null); }
+  }
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/3">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-white/70 hover:text-white transition"
+      >
+        <span className="flex items-center gap-2">
+          <ImageIcon className="h-4 w-4 text-amber-400/60" />
+          Project Photos
+          <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/50">
+            {photos.length} / {MAX_PHOTOS}
+          </span>
+        </span>
+        {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </button>
+
+      {open && (
+        <div className="space-y-3 border-t border-white/8 px-4 pb-4 pt-3">
+          {photos.length === 0 && (
+            <p className="text-xs text-white/30">No photos yet. Add up to {MAX_PHOTOS}.</p>
+          )}
+          <div className="grid grid-cols-3 gap-2">
+            {photos.map((ph) => (
+              <div key={ph.id} className="group relative rounded-lg overflow-hidden border border-white/10">
+                <img src={ph.image_url} alt={ph.caption} className="h-16 w-full object-cover" />
+                {ph.caption && (
+                  <p className="truncate bg-black/60 px-1.5 py-0.5 text-[10px] text-white/60">{ph.caption}</p>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleDelete(ph.id)}
+                  disabled={deletingId === ph.id}
+                  className="absolute right-1 top-1 rounded-full bg-black/70 p-0.5 text-white/60 opacity-0 transition hover:text-red-400 group-hover:opacity-100"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {photos.length < MAX_PHOTOS && (
+            <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Add Photo</p>
+              <ImageUploader
+                folder="portfolio-photos"
+                value={newUrl}
+                onChange={(url) => setNewUrl(url)}
+              />
+              <input
+                className={inputCls}
+                value={newCaption}
+                onChange={(e) => setNewCaption(e.target.value)}
+                placeholder="Caption (optional)"
+              />
+              <button
+                type="button"
+                onClick={handleAdd}
+                disabled={!newUrl || saving}
+                className="w-full rounded-xl bg-amber-400/10 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-400/20 disabled:opacity-40"
+              >
+                {saving ? 'Saving…' : 'Add Photo'}
+              </button>
+            </div>
+          )}
+
+          {err && <p className="text-xs text-red-400">{err}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function PortfolioPage() {
-  const { projects, gallery, loading, addProject, updateProject, deleteProject, addGalleryItem, updateGalleryItem, deleteGalleryItem } = usePortfolio();
+  const { projects, gallery, loading, addProject, updateProject, deleteProject, addGalleryItem, updateGalleryItem, deleteGalleryItem, addPhoto, deletePhoto } = usePortfolio();
   const [tab, setTab] = useState('projects');
 
   // Project form state
@@ -240,6 +346,18 @@ export default function PortfolioPage() {
           <Field label="Sort Order">
             <input type="number" className={inputCls} value={projForm.sort_order} onChange={(e) => setProjForm((f) => ({ ...f, sort_order: +e.target.value }))} />
           </Field>
+
+          {editingProj && (() => {
+            const proj = projects.find((p) => p.id === editingProj);
+            return (
+              <ProjectPhotos
+                projectId={editingProj}
+                photos={proj?.portfolio_photos ?? []}
+                addPhoto={addPhoto}
+                deletePhoto={deletePhoto}
+              />
+            );
+          })()}
 
           {projError && <p className="text-sm text-red-400">{projError}</p>}
           <div className="mt-auto flex gap-3">

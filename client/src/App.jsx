@@ -14,6 +14,7 @@ import Process from "./components/sections/Process.jsx";
 import Testimonials from "./components/sections/Testimonials.jsx";
 import Contact from "./components/sections/Contact.jsx";
 import LoginPage from "./components/auth/LoginPage.jsx";
+import WorkPage from "./pages/WorkPage.jsx";
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 import DashboardLayout from "./components/dashboard/DashboardLayout.jsx";
 import DashboardHome from "./components/dashboard/DashboardHome.jsx";
@@ -68,6 +69,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/work/:id" element={<WorkPage />} />
       <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
 
       {/* ── Admin dashboard ── */}

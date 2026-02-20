@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import GlareHover from "../reactbits/GlareHover.jsx";
 import AnimatedGradientText from "../reactbits/AnimatedGradientText.jsx";
 import CountUp from "../reactbits/CountUp.jsx";
@@ -123,6 +124,61 @@ export default function Portfolio() {
               // Parse numeric value from metric_value string (e.g. "38%" → 38)
               const numericValue = parseFloat(project.metric_value) || 0;
               const suffix = project.metric_value?.replace(/[\d.]/g, '') ?? '';
+              // Fallback cards use ids starting with 'f' — don't link those
+              const isLive = !String(project.id).startsWith('f');
+              const card = (
+                <GlareHover>
+                  <div className={`relative overflow-hidden rounded-3xl border border-white/10 px-5 py-6${isLive ? ' cursor-pointer' : ''}`}>
+                    {/* Project photo */}
+                    {project.image_url && (
+                      <img
+                        src={project.image_url}
+                        alt={project.title}
+                        className="absolute inset-0 h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    )}
+                    {/* Gradient overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${project.overlay_gradient}`} />
+                    <div className="relative flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
+                          {project.location}
+                        </span>
+                        <span className={`h-2 w-10 rounded-full ${project.accent_color}`} />
+                      </div>
+                      <h3 className="text-xl font-semibold text-white">{project.title}</h3>
+                      <p className="text-sm text-white/75">{project.summary}</p>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                        <span className="rounded-full bg-white/10 px-2 py-1 text-xs text-amber-300/80">
+                          {project.metric_label}
+                        </span>
+                        <span className="text-lg">
+                          {numericValue > 0 ? (
+                            <><CountUp to={numericValue} duration={1.4} />{suffix}</>
+                          ) : (
+                            project.metric_value
+                          )}
+                        </span>
+                      </div>
+                      {tags.length > 0 && (
+                        <div className="flex flex-wrap gap-2 text-xs text-white/75">
+                          {tags.map((tag) => (
+                            <span key={tag} className="rounded-full bg-white/10 px-3 py-1">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {isLive && (
+                        <span className="mt-1 self-start rounded-full border border-amber-400/25 bg-amber-400/8 px-3 py-1 text-xs font-semibold text-amber-300/80">
+                          View Project →
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </GlareHover>
+              );
               return (
                 <motion.div
                   key={project.id}
@@ -131,52 +187,11 @@ export default function Portfolio() {
                   viewport={{ once: true, margin: "-12%" }}
                   transition={{ duration: 0.55, delay: idx * 0.06 }}
                 >
-                  <GlareHover>
-                    <div className="relative overflow-hidden rounded-3xl border border-white/10 px-5 py-6">
-                      {/* Project photo */}
-                      {project.image_url && (
-                        <img
-                          src={project.image_url}
-                          alt={project.title}
-                          className="absolute inset-0 h-full w-full object-cover"
-                          loading="lazy"
-                        />
-                      )}
-                      {/* Gradient overlay */}
-                      <div className={`absolute inset-0 bg-gradient-to-br ${project.overlay_gradient}`} />
-                      <div className="relative flex flex-col gap-3">
-                        <div className="flex items-center justify-between">
-                          <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
-                            {project.location}
-                          </span>
-                          <span className={`h-2 w-10 rounded-full ${project.accent_color}`} />
-                        </div>
-                        <h3 className="text-xl font-semibold text-white">{project.title}</h3>
-                        <p className="text-sm text-white/75">{project.summary}</p>
-                        <div className="flex items-center gap-2 text-sm font-semibold text-white">
-                          <span className="rounded-full bg-white/10 px-2 py-1 text-xs text-amber-300/80">
-                            {project.metric_label}
-                          </span>
-                          <span className="text-lg">
-                            {numericValue > 0 ? (
-                              <><CountUp to={numericValue} duration={1.4} />{suffix}</>
-                            ) : (
-                              project.metric_value
-                            )}
-                          </span>
-                        </div>
-                        {tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 text-xs text-white/75">
-                            {tags.map((tag) => (
-                              <span key={tag} className="rounded-full bg-white/10 px-3 py-1">
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </GlareHover>
+                  {isLive ? (
+                    <Link to={`/work/${project.id}`} className="block">
+                      {card}
+                    </Link>
+                  ) : card}
                 </motion.div>
               );
             })}

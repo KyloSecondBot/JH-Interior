@@ -14,7 +14,7 @@ export function usePortfolio() {
       const [{ data: proj, error: e1 }, { data: gal, error: e2 }] = await Promise.all([
         supabase
           .from('portfolio_projects')
-          .select('*, portfolio_tags(tag)')
+          .select('*, portfolio_tags(tag), portfolio_photos(id, image_url, caption, sort_order)')
           .order('sort_order', { ascending: true }),
         supabase
           .from('portfolio_gallery')
@@ -109,9 +109,30 @@ export function usePortfolio() {
     await fetchAll();
   }
 
+  async function addPhoto(projectId, { image_url, caption = '', sort_order = 0 }) {
+    const { data: row, error: e } = await supabase
+      .from('portfolio_photos')
+      .insert({ project_id: projectId, image_url, caption, sort_order })
+      .select()
+      .single();
+    if (e) throw e;
+    await fetchAll();
+    return row;
+  }
+
+  async function deletePhoto(id) {
+    const { error: e } = await supabase
+      .from('portfolio_photos')
+      .delete()
+      .eq('id', id);
+    if (e) throw e;
+    await fetchAll();
+  }
+
   return {
     projects, gallery, loading, error, refetch: fetchAll,
     addProject, updateProject, deleteProject,
     addGalleryItem, updateGalleryItem, deleteGalleryItem,
+    addPhoto, deletePhoto,
   };
 }
