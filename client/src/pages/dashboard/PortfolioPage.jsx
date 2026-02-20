@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Plus, X, Image as ImageIcon, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, X, Images, Trash2, Upload, ImageOff } from 'lucide-react';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import DataTable from '../../components/dashboard/DataTable';
 import ImageUploader from '../../components/dashboard/ImageUploader';
@@ -17,7 +17,6 @@ function Field({ label, children }) {
   );
 }
 
-/* ── Project empty state ── */
 const EMPTY_PROJECT = {
   title: '', location: '', type: '', summary: '',
   metric_label: '', metric_value: '',
@@ -28,12 +27,13 @@ const EMPTY_PROJECT = {
   tags: [],
 };
 
-/* ── Gallery empty state ── */
 const EMPTY_GALLERY = {
   title: '', caption: '', image_url: '',
   tone_gradient: 'from-black/60 via-black/35 to-black/70',
   sort_order: 0,
 };
+
+const MAX_PHOTOS = 12;
 
 /* ── Slide-over drawer shell ── */
 function Drawer({ title, open, onClose, children }) {
@@ -69,25 +69,34 @@ function Tab({ active, onClick, children }) {
   );
 }
 
-/* ── Project Photos sub-section ── */
-const MAX_PHOTOS = 12;
-
-function ProjectPhotos({ projectId, photos = [], addPhoto, deletePhoto }) {
-  const [open, setOpen] = useState(false);
-  const [newUrl, setNewUrl] = useState('');
+/* ═══════════════════════════════════════════════════════════
+   PHOTO MANAGER MODAL
+   Mobile : full-screen, tab bar (Gallery | Add Photo)
+   Desktop: two-panel side-by-side
+   ═══════════════════════════════════════════════════════════ */
+function PhotoManagerModal({ projectTitle, projectId, photos, addPhoto, deletePhoto, onClose }) {
+  const [newUrl, setNewUrl]         = useState('');
   const [newCaption, setNewCaption] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [err, setErr] = useState(null);
+  const [saving, setSaving]         = useState(false);
   const [deletingId, setDeletingId] = useState(null);
+  const [err, setErr]               = useState(null);
+  // Mobile tab: 'gallery' | 'upload'
+  const [mobileTab, setMobileTab]   = useState('gallery');
 
   async function handleAdd() {
     if (!newUrl) return;
     setSaving(true);
     setErr(null);
     try {
-      await addPhoto(projectId, { image_url: newUrl, caption: newCaption, sort_order: photos.length });
+      await addPhoto(projectId, {
+        image_url: newUrl,
+        caption: newCaption,
+        sort_order: photos.length,
+      });
       setNewUrl('');
       setNewCaption('');
+      // After adding, switch back to gallery so admin can see what they just added
+      setMobileTab('gallery');
     } catch (e) {
       setErr(e.message);
     } finally {
@@ -97,97 +106,268 @@ function ProjectPhotos({ projectId, photos = [], addPhoto, deletePhoto }) {
 
   async function handleDelete(id) {
     setDeletingId(id);
+    setErr(null);
     try { await deletePhoto(id); }
     catch (e) { setErr(e.message); }
     finally { setDeletingId(null); }
   }
 
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/3">
-      <button
-        type="button"
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-white/70 hover:text-white transition"
-      >
-        <span className="flex items-center gap-2">
-          <ImageIcon className="h-4 w-4 text-amber-400/60" />
-          Project Photos
-          <span className="rounded-full bg-white/10 px-2 py-0.5 text-xs text-white/50">
-            {photos.length} / {MAX_PHOTOS}
-          </span>
-        </span>
-        {open ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-      </button>
+  const atLimit = photos.length >= MAX_PHOTOS;
 
-      {open && (
-        <div className="space-y-3 border-t border-white/8 px-4 pb-4 pt-3">
-          {photos.length === 0 && (
-            <p className="text-xs text-white/30">No photos yet. Add up to {MAX_PHOTOS}.</p>
-          )}
-          <div className="grid grid-cols-3 gap-2">
-            {photos.map((ph) => (
-              <div key={ph.id} className="group relative rounded-lg overflow-hidden border border-white/10">
-                <img src={ph.image_url} alt={ph.caption} className="h-16 w-full object-cover" />
-                {ph.caption && (
-                  <p className="truncate bg-black/60 px-1.5 py-0.5 text-[10px] text-white/60">{ph.caption}</p>
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleDelete(ph.id)}
-                  disabled={deletingId === ph.id}
-                  className="absolute right-1 top-1 rounded-full bg-black/70 p-0.5 text-white/60 opacity-0 transition hover:text-red-400 group-hover:opacity-100"
-                >
-                  <Trash2 className="h-3 w-3" />
-                </button>
-              </div>
-            ))}
-          </div>
-
-          {photos.length < MAX_PHOTOS && (
-            <div className="space-y-2 rounded-xl border border-white/10 bg-white/5 p-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">Add Photo</p>
-              <ImageUploader
-                folder="portfolio-photos"
-                value={newUrl}
-                onChange={(url) => setNewUrl(url)}
+  /* ── Reusable photo grid ── */
+  const PhotoGrid = () => (
+    photos.length === 0 ? (
+      <div className="flex h-full min-h-[220px] flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-white/10">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5">
+          <ImageOff className="h-7 w-7 text-white/20" />
+        </div>
+        <div className="text-center">
+          <p className="font-medium text-white/50">No photos yet</p>
+          <p className="mt-1 text-sm text-white/25">
+            {/* hint differs by breakpoint */}
+            <span className="sm:hidden">Tap "Add Photo" below to get started</span>
+            <span className="hidden sm:inline">Upload photos using the panel on the right</span>
+          </p>
+        </div>
+      </div>
+    ) : (
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {photos.map((ph, i) => (
+          <motion.div
+            key={ph.id}
+            layout
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.88 }}
+            transition={{ duration: 0.2, delay: i * 0.03 }}
+            className="overflow-hidden rounded-2xl border border-white/10 bg-white/3"
+          >
+            <div className="relative">
+              <img
+                src={ph.image_url}
+                alt={ph.caption || `Photo ${i + 1}`}
+                className="h-32 w-full object-cover sm:h-40"
+                loading="lazy"
               />
-              <input
-                className={inputCls}
-                value={newCaption}
-                onChange={(e) => setNewCaption(e.target.value)}
-                placeholder="Caption (optional)"
-              />
+              <span className="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-semibold text-white/70 backdrop-blur-sm">
+                #{i + 1}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 px-3 py-2.5">
+              <p className="flex-1 truncate text-xs text-white/50">
+                {ph.caption || <span className="italic text-white/20">No caption</span>}
+              </p>
               <button
                 type="button"
-                onClick={handleAdd}
-                disabled={!newUrl || saving}
-                className="w-full rounded-xl bg-amber-400/10 py-2 text-sm font-medium text-amber-300 transition hover:bg-amber-400/20 disabled:opacity-40"
+                onClick={() => handleDelete(ph.id)}
+                disabled={deletingId === ph.id}
+                className="flex shrink-0 items-center gap-1 rounded-lg bg-red-500/10 px-2.5 py-1.5 text-xs font-medium text-red-400 transition active:bg-red-500/30 hover:bg-red-500/20 disabled:opacity-40"
               >
-                {saving ? 'Saving…' : 'Add Photo'}
+                {deletingId === ph.id
+                  ? <span className="h-3 w-3 animate-spin rounded-full border border-red-400 border-t-transparent" />
+                  : <Trash2 className="h-3 w-3" />}
+                Delete
               </button>
             </div>
-          )}
+          </motion.div>
+        ))}
+      </div>
+    )
+  );
 
-          {err && <p className="text-xs text-red-400">{err}</p>}
-        </div>
+  /* ── Reusable upload form ── */
+  const UploadForm = () => (
+    <div className="flex flex-col gap-4">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-300/70">Add New Photo</p>
+
+      {atLimit ? (
+        <p className="rounded-xl bg-amber-400/10 px-4 py-3 text-sm text-amber-300/80 text-center">
+          Maximum of {MAX_PHOTOS} photos reached.<br />Delete one to add more.
+        </p>
+      ) : (
+        <>
+          <ImageUploader
+            folder="portfolio-photos"
+            value={newUrl}
+            onChange={(url) => setNewUrl(url)}
+          />
+          <Field label="Caption (optional)">
+            <input
+              className={inputCls}
+              value={newCaption}
+              onChange={(e) => setNewCaption(e.target.value)}
+              placeholder="e.g. Living room detail"
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAdd(); } }}
+            />
+          </Field>
+          <button
+            type="button"
+            onClick={handleAdd}
+            disabled={!newUrl || saving}
+            className="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 py-3.5 text-sm font-semibold text-black transition hover:bg-amber-300 active:scale-95 disabled:opacity-40"
+          >
+            {saving
+              ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-black border-t-transparent" />
+              : <Upload className="h-4 w-4" />}
+            {saving ? 'Saving…' : 'Add Photo'}
+          </button>
+        </>
       )}
+
+      {err && <p className="rounded-xl bg-red-500/10 px-3 py-2 text-xs text-red-400">{err}</p>}
+
+      <div className="rounded-xl border border-white/8 bg-white/3 p-4 space-y-1.5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-white/30">Tips</p>
+        <ul className="space-y-1 text-xs text-white/35">
+          <li>• Photos appear in the order added</li>
+          <li>• Max {MAX_PHOTOS} photos per project</li>
+          <li>• Best ratio: 4:3 or 3:2</li>
+        </ul>
+      </div>
     </div>
+  );
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.18 }}
+      /* Full-screen on mobile, centered overlay on desktop */
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4"
+    >
+      {/* Backdrop — only tappable on desktop (mobile full-screen has no room) */}
+      <div className="absolute inset-0 bg-black/75 backdrop-blur-md sm:block hidden" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/80 sm:hidden" />
+
+      {/* Modal shell */}
+      <motion.div
+        initial={{ y: '100%', opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: '100%', opacity: 0 }}
+        transition={{ type: 'spring', stiffness: 380, damping: 36 }}
+        /* Mobile: slides up from bottom, full height
+           Desktop: centered, fixed max-width, spring scale */
+        className="relative flex w-full flex-col bg-[#0e0e0e]
+                   h-[92dvh] rounded-t-3xl
+                   sm:h-auto sm:max-h-[calc(100vh-48px)] sm:rounded-3xl sm:max-w-4xl
+                   sm:border sm:border-white/10 sm:shadow-2xl"
+      >
+        {/* ── Header ── */}
+        <div className="flex shrink-0 items-center justify-between border-b border-white/8 px-5 py-4 sm:px-8 sm:py-5">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-amber-400/10 sm:h-9 sm:w-9">
+              <Images className="h-4 w-4 text-amber-400 sm:h-5 sm:w-5" />
+            </div>
+            <div>
+              <h2 className="text-sm font-semibold text-white sm:text-base">Project Photos</h2>
+              <p className="text-xs text-white/40 truncate max-w-[160px] sm:max-w-xs">{projectTitle}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold sm:px-4 sm:py-1.5 sm:text-sm ${
+              atLimit ? 'bg-amber-400/20 text-amber-300' : 'bg-white/8 text-white/60'
+            }`}>
+              {photos.length}/{MAX_PHOTOS}
+            </span>
+            <button
+              onClick={onClose}
+              className="rounded-xl border border-white/10 p-2 text-white/40 transition hover:text-white"
+            >
+              <X className="h-4 w-4 sm:h-5 sm:w-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* ── Mobile tab bar ── */}
+        <div className="flex shrink-0 border-b border-white/8 sm:hidden">
+          <button
+            type="button"
+            onClick={() => setMobileTab('gallery')}
+            className={`flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition border-b-2 ${
+              mobileTab === 'gallery'
+                ? 'border-amber-400 text-amber-300'
+                : 'border-transparent text-white/40'
+            }`}
+          >
+            <Images className="h-4 w-4" />
+            Gallery ({photos.length})
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab('upload')}
+            className={`flex flex-1 items-center justify-center gap-2 py-3 text-sm font-medium transition border-b-2 ${
+              mobileTab === 'upload'
+                ? 'border-amber-400 text-amber-300'
+                : 'border-transparent text-white/40'
+            }`}
+          >
+            <Upload className="h-4 w-4" />
+            Add Photo
+          </button>
+        </div>
+
+        {/* ── Body ── */}
+        <div className="flex min-h-0 flex-1 overflow-hidden">
+
+          {/* Gallery panel — full width on mobile (tab-controlled), left panel on desktop */}
+          <div className={`flex-1 overflow-y-auto p-4 sm:p-8 ${mobileTab === 'upload' ? 'hidden sm:block' : ''}`}>
+            <PhotoGrid />
+          </div>
+
+          {/* Upload panel — full width on mobile (tab-controlled), right panel on desktop */}
+          <div className={`overflow-y-auto border-white/8 bg-white/2 p-5 sm:p-6
+                          sm:flex sm:w-80 sm:shrink-0 sm:flex-col sm:border-l
+                          ${mobileTab === 'gallery' ? 'hidden sm:flex' : 'flex flex-col w-full'}`}>
+            <UploadForm />
+          </div>
+        </div>
+
+        {/* ── Footer ── */}
+        <div className="flex shrink-0 items-center justify-between border-t border-white/8 px-5 py-3 sm:px-8 sm:py-4">
+          <p className="text-xs text-white/30 hidden sm:block">
+            {photos.length === 0
+              ? 'No photos — visitors see "Gallery coming soon"'
+              : `${photos.length} photo${photos.length !== 1 ? 's' : ''} on the public page`}
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full sm:w-auto rounded-xl bg-white/8 px-5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/12 hover:text-white"
+          >
+            Done
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 
+/* ═══════════════════════════════════════════════════════════
+   MAIN PAGE
+   ═══════════════════════════════════════════════════════════ */
 export default function PortfolioPage() {
-  const { projects, gallery, loading, addProject, updateProject, deleteProject, addGalleryItem, updateGalleryItem, deleteGalleryItem, addPhoto, deletePhoto } = usePortfolio();
+  const {
+    projects, gallery, loading,
+    addProject, updateProject, deleteProject,
+    addGalleryItem, updateGalleryItem, deleteGalleryItem,
+    addPhoto, deletePhoto,
+  } = usePortfolio();
+
   const [tab, setTab] = useState('projects');
 
   // Project form state
-  const [projForm, setProjForm]     = useState(EMPTY_PROJECT);
+  const [projForm, setProjForm]       = useState(EMPTY_PROJECT);
   const [editingProj, setEditingProj] = useState(null);
   const [projDrawer, setProjDrawer]   = useState(false);
   const [projSaving, setProjSaving]   = useState(false);
   const [projError, setProjError]     = useState(null);
 
+  // Photo manager state
+  const [photoModalId, setPhotoModalId] = useState(null); // project id whose photos we're managing
+
   // Gallery form state
-  const [galForm, setGalForm]       = useState(EMPTY_GALLERY);
+  const [galForm, setGalForm]         = useState(EMPTY_GALLERY);
   const [editingGal, setEditingGal]   = useState(null);
   const [galDrawer, setGalDrawer]     = useState(false);
   const [galSaving, setGalSaving]     = useState(false);
@@ -257,20 +437,40 @@ export default function PortfolioPage() {
     }
   }
 
+  // Resolve photo modal project
+  const photoModalProject = photoModalId ? projects.find((p) => p.id === photoModalId) : null;
+
   const projColumns = [
-    { key: 'image_url',    label: 'Image', render: (v) => v ? <img src={v} alt="" className="h-8 w-12 rounded-lg object-cover" /> : <span className="text-white/25">—</span> },
+    { key: 'image_url',    label: 'Image',    render: (v) => v ? <img src={v} alt="" className="h-8 w-12 rounded-lg object-cover" /> : <span className="text-white/25">—</span> },
     { key: 'title',        label: 'Title' },
-    { key: 'location',     label: 'Location' },
-    { key: 'type',         label: 'Type' },
-    { key: 'metric_value', label: 'Metric' },
-    { key: 'sort_order',   label: 'Order' },
+    { key: 'location',     label: 'Location', mobileHide: true },
+    { key: 'type',         label: 'Type',     mobileHide: true },
+    { key: 'metric_value', label: 'Metric',   mobileHide: true },
+    {
+      key: 'id',
+      label: 'Photos',
+      render: (_, row) => {
+        const count = row.portfolio_photos?.length ?? 0;
+        return (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setPhotoModalId(row.id); }}
+            className="flex items-center gap-1.5 rounded-lg bg-amber-400/10 px-2.5 py-1 text-xs font-semibold text-amber-300 transition hover:bg-amber-400/20"
+          >
+            <Images className="h-3.5 w-3.5" />
+            {count}
+          </button>
+        );
+      },
+    },
+    { key: 'sort_order', label: 'Order', mobileHide: true },
   ];
 
   const galColumns = [
-    { key: 'image_url', label: 'Image', render: (v) => v ? <img src={v} alt="" className="h-8 w-12 rounded-lg object-cover" /> : <span className="text-white/25">—</span> },
+    { key: 'image_url', label: 'Image',   render: (v) => v ? <img src={v} alt="" className="h-8 w-12 rounded-lg object-cover" /> : <span className="text-white/25">—</span> },
     { key: 'title',     label: 'Title' },
-    { key: 'caption',   label: 'Caption' },
-    { key: 'sort_order',label: 'Order' },
+    { key: 'caption',   label: 'Caption', mobileHide: true },
+    { key: 'sort_order',label: 'Order',   mobileHide: true },
   ];
 
   return (
@@ -304,7 +504,7 @@ export default function PortfolioPage() {
         <DataTable columns={galColumns} rows={gallery} onEdit={openEditGal} onDelete={deleteGalleryItem} emptyText="No gallery items yet." />
       )}
 
-      {/* Project drawer */}
+      {/* ── Project drawer ── */}
       <Drawer title={editingProj ? 'Edit Project' : 'Add Project'} open={projDrawer} onClose={() => setProjDrawer(false)}>
         <form onSubmit={handleSaveProj} className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
           <Field label="Title">
@@ -337,7 +537,7 @@ export default function PortfolioPage() {
               placeholder="Motion lighting, Gallery curation"
             />
           </Field>
-          <Field label="Image">
+          <Field label="Cover Image">
             <ImageUploader folder="portfolio" value={projForm.image_url} onChange={(url) => setProjForm((f) => ({ ...f, image_url: url }))} />
           </Field>
           <Field label="Overlay Gradient (Tailwind)">
@@ -347,15 +547,24 @@ export default function PortfolioPage() {
             <input type="number" className={inputCls} value={projForm.sort_order} onChange={(e) => setProjForm((f) => ({ ...f, sort_order: +e.target.value }))} />
           </Field>
 
+          {/* Photos CTA — only when editing an existing project */}
           {editingProj && (() => {
             const proj = projects.find((p) => p.id === editingProj);
+            const count = proj?.portfolio_photos?.length ?? 0;
             return (
-              <ProjectPhotos
-                projectId={editingProj}
-                photos={proj?.portfolio_photos ?? []}
-                addPhoto={addPhoto}
-                deletePhoto={deletePhoto}
-              />
+              <button
+                type="button"
+                onClick={() => setPhotoModalId(editingProj)}
+                className="flex w-full items-center justify-between rounded-xl border border-amber-400/20 bg-amber-400/5 px-4 py-3.5 text-sm transition hover:bg-amber-400/10"
+              >
+                <span className="flex items-center gap-2.5 font-medium text-amber-300">
+                  <Images className="h-4 w-4" />
+                  Manage Project Photos
+                </span>
+                <span className="rounded-full bg-amber-400/15 px-3 py-1 text-xs font-semibold text-amber-300">
+                  {count} / {MAX_PHOTOS}
+                </span>
+              </button>
             );
           })()}
 
@@ -369,7 +578,7 @@ export default function PortfolioPage() {
         </form>
       </Drawer>
 
-      {/* Gallery drawer */}
+      {/* ── Gallery drawer ── */}
       <Drawer title={editingGal ? 'Edit Gallery Item' : 'Add Gallery Item'} open={galDrawer} onClose={() => setGalDrawer(false)}>
         <form onSubmit={handleSaveGal} className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
           <Field label="Title">
@@ -397,6 +606,20 @@ export default function PortfolioPage() {
           </div>
         </form>
       </Drawer>
+
+      {/* ── Photo Manager Modal ── */}
+      <AnimatePresence>
+        {photoModalId && photoModalProject && (
+          <PhotoManagerModal
+            projectTitle={photoModalProject.title}
+            projectId={photoModalId}
+            photos={photoModalProject.portfolio_photos ?? []}
+            addPhoto={addPhoto}
+            deletePhoto={deletePhoto}
+            onClose={() => setPhotoModalId(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

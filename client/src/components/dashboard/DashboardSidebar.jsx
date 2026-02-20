@@ -14,11 +14,12 @@ const nav = [
   { label: 'Contact',      href: '/dashboard/contact',      icon: MapPin },
 ];
 
-function NavItem({ href, icon: Icon, label, end }) {
+function NavItem({ href, icon: Icon, label, end, onClose }) {
   return (
     <NavLink
       to={href}
       end={end}
+      onClick={onClose}
       className={({ isActive }) =>
         `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all
          ${isActive
@@ -32,11 +33,12 @@ function NavItem({ href, icon: Icon, label, end }) {
   );
 }
 
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ onClose }) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
   async function handleSignOut() {
+    onClose?.();
     await signOut();
     navigate('/');
   }
@@ -54,7 +56,7 @@ export default function DashboardSidebar() {
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
         {nav.map((item) => (
-          <NavItem key={item.href} {...item} />
+          <NavItem key={item.href} {...item} onClose={onClose} />
         ))}
       </nav>
 
@@ -64,6 +66,7 @@ export default function DashboardSidebar() {
       <div className="px-3 py-4 space-y-0.5">
         <NavLink
           to="/"
+          onClick={onClose}
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/45 transition hover:bg-white/5 hover:text-white/80"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />

@@ -42,7 +42,7 @@ export default function DashboardLayout() {
               exit={{ x: -260 }}
               transition={{ type: 'spring', stiffness: 380, damping: 32 }}
             >
-              <DashboardSidebar />
+              <DashboardSidebar onClose={() => setSidebarOpen(false)} />
             </motion.div>
           </>
         )}

@@ -36,7 +36,7 @@ export default function DataTable({ columns = [], rows = [], onEdit, onDelete, k
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40"
+                  className={`px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-[0.18em] text-white/40${col.mobileHide ? ' hidden sm:table-cell' : ''}`}
                 >
                   {col.label}
                 </th>
@@ -65,7 +65,7 @@ export default function DataTable({ columns = [], rows = [], onEdit, onDelete, k
                   className="border-b border-white/5 transition hover:bg-white/3 last:border-0"
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-3 text-white/75">
+                    <td key={col.key} className={`px-4 py-3 text-white/75${col.mobileHide ? ' hidden sm:table-cell' : ''}`}>
                       {col.render ? col.render(row[col.key], row) : (row[col.key] ?? '—')}
                     </td>
                   ))}
