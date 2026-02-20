@@ -1,14 +1,16 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Image, Layers, Quote, BarChart2, MapPin,
-  ArrowLeft, LogOut,
+  Briefcase, ListOrdered, ArrowLeft, LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 const nav = [
   { label: 'Overview',     href: '/dashboard',              icon: LayoutDashboard, end: true },
   { label: 'Portfolio',    href: '/dashboard/portfolio',    icon: Image },
-  { label: 'Work Stack',   href: '/dashboard/workstack',    icon: Layers },
+  { label: 'Trends',       href: '/dashboard/workstack',    icon: Layers },
+  { label: 'Services',     href: '/dashboard/services',     icon: Briefcase },
+  { label: 'Process',      href: '/dashboard/process',      icon: ListOrdered },
   { label: 'Testimonials', href: '/dashboard/testimonials', icon: Quote },
   { label: 'Stats',        href: '/dashboard/stats',        icon: BarChart2 },
   { label: 'Contact',      href: '/dashboard/contact',      icon: MapPin },

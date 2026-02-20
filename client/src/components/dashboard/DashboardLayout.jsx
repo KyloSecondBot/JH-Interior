@@ -7,7 +7,9 @@ import DashboardSidebar from './DashboardSidebar';
 const pageTitle = {
   '/dashboard':              'Overview',
   '/dashboard/portfolio':    'Portfolio',
-  '/dashboard/workstack':    'Work Stack',
+  '/dashboard/workstack':    'Trends',
+  '/dashboard/services':     'Services',
+  '/dashboard/process':      'Process Steps',
   '/dashboard/testimonials': 'Testimonials',
   '/dashboard/stats':        'Stats',
   '/dashboard/contact':      'Contact',

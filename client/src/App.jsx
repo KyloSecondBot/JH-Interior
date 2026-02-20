@@ -20,6 +20,8 @@ import DashboardLayout from "./components/dashboard/DashboardLayout.jsx";
 import DashboardHome from "./components/dashboard/DashboardHome.jsx";
 import PortfolioPage from "./pages/dashboard/PortfolioPage.jsx";
 import WorkStackPage from "./pages/dashboard/WorkStackPage.jsx";
+import ServicesPage from "./pages/dashboard/ServicesPage.jsx";
+import ProcessPage from "./pages/dashboard/ProcessPage.jsx";
 import TestimonialsPage from "./pages/dashboard/TestimonialsPage.jsx";
 import StatsPage from "./pages/dashboard/StatsPage.jsx";
 import ContactPage from "./pages/dashboard/ContactPage.jsx";
@@ -84,6 +86,8 @@ export default function App() {
         <Route index element={<DashboardHome />} />
         <Route path="portfolio"    element={<PortfolioPage />} />
         <Route path="workstack"    element={<WorkStackPage />} />
+        <Route path="services"     element={<ServicesPage />} />
+        <Route path="process"      element={<ProcessPage />} />
         <Route path="testimonials" element={<TestimonialsPage />} />
         <Route path="stats"        element={<StatsPage />} />
         <Route path="contact"      element={<ContactPage />} />

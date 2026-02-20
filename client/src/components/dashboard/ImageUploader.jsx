@@ -71,7 +71,7 @@ export default function ImageUploader({ folder = 'portfolio', value, onChange, c
           onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
           onDragLeave={() => setDragging(false)}
           onDrop={handleDrop}
-          onClick={() => inputRef.current?.click()}
+          onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
           className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-8 transition
             ${dragging ? 'border-amber-400/60 bg-amber-400/5' : 'border-white/10 bg-white/3 hover:border-white/20 hover:bg-white/5'}`}
         >
@@ -92,6 +92,7 @@ export default function ImageUploader({ folder = 'portfolio', value, onChange, c
         accept="image/*"
         className="hidden"
         onChange={handleChange}
+        onClick={(e) => e.stopPropagation()}
       />
 
       {/* Manual URL fallback */}

@@ -3,12 +3,13 @@ import { motion } from 'framer-motion';
 import { Plus, X } from 'lucide-react';
 import { useWorkStack } from '../../hooks/useWorkStack';
 import DataTable from '../../components/dashboard/DataTable';
+import ImageUploader from '../../components/dashboard/ImageUploader';
 
 const EMPTY = {
   index: '01', title: '', location: '', type: '', description: '',
   metric: '', metric_label: '',
   palette_from: '#0d0d0d', palette_via: '#111111', palette_to: '#000000',
-  accent_color: 'text-amber-300', sort_order: 0,
+  accent_color: 'text-amber-300', image_url: '', sort_order: 0,
 };
 
 const inputCls = 'rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder-white/25 outline-none focus:border-amber-400/50 transition';
@@ -46,7 +47,7 @@ export default function WorkStackPage() {
       index: row.index, title: row.title, location: row.location, type: row.type,
       description: row.description, metric: row.metric, metric_label: row.metric_label,
       palette_from: row.palette_from, palette_via: row.palette_via, palette_to: row.palette_to,
-      accent_color: row.accent_color, sort_order: row.sort_order,
+      accent_color: row.accent_color, image_url: row.image_url ?? '', sort_order: row.sort_order,
     });
     setEditing(row.id);
     setDrawerOpen(true);
@@ -69,20 +70,21 @@ export default function WorkStackPage() {
   }
 
   const columns = [
-    { key: 'index',       label: '#' },
-    { key: 'title',       label: 'Title' },
-    { key: 'location',    label: 'Location' },
-    { key: 'type',        label: 'Type' },
-    { key: 'metric',      label: 'Metric' },
-    { key: 'sort_order',  label: 'Order' },
+    { key: 'image_url',  label: 'Image',    render: (v) => v ? <img src={v} alt="" className="h-8 w-12 rounded-lg object-cover" /> : <span className="text-white/25">—</span> },
+    { key: 'index',      label: '#' },
+    { key: 'title',      label: 'Title' },
+    { key: 'location',   label: 'Location', mobileHide: true },
+    { key: 'type',       label: 'Type',     mobileHide: true },
+    { key: 'metric',     label: 'Metric',   mobileHide: true },
+    { key: 'sort_order', label: 'Order',    mobileHide: true },
   ];
 
   return (
     <div className="space-y-6 max-w-5xl">
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-white">Work Stack</h2>
-          <p className="mt-0.5 text-sm text-white/40">Case studies shown in the sticky scroll section.</p>
+          <h2 className="text-xl font-semibold text-white">Trends</h2>
+          <p className="mt-0.5 text-sm text-white/40">Design trends shown in the scroll stack section.</p>
         </div>
         <button onClick={openAdd} className="flex items-center gap-2 rounded-xl bg-amber-400 px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-amber-300">
           <Plus className="h-4 w-4" /> Add Project
@@ -144,6 +146,9 @@ export default function WorkStackPage() {
               </div>
               <Field label="Accent Color Class">
                 <input className={inputCls} value={form.accent_color} onChange={s('accent_color')} placeholder="text-amber-300" />
+              </Field>
+              <Field label="Background Image (optional — replaces gradient)">
+                <ImageUploader folder="workstack" value={form.image_url} onChange={(url) => setForm((f) => ({ ...f, image_url: url }))} />
               </Field>
 
               {error && <p className="text-sm text-red-400">{error}</p>}
