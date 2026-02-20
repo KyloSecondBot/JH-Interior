@@ -137,7 +137,7 @@ const CardNav = ({ logo, logoAlt = 'Logo', items = [], ease = 'power3.out' }) =>
           {/* CTA — desktop only */}
           <a
             href="#contact"
-            className="hidden md:inline-flex items-center rounded-full bg-white px-4 py-2 text-slate-950 text-sm font-semibold shadow-[0_6px_24px_rgba(255,255,255,0.1)] transition hover:-translate-y-[1px]"
+            className="hidden md:inline-flex items-center rounded-full bg-gradient-to-r from-amber-300 to-amber-400 px-4 py-2 text-slate-950 text-sm font-semibold shadow-[0_6px_24px_rgba(251,191,36,0.25)] transition hover:-translate-y-[1px]"
             onClick={() => { if (isExpanded) toggleMenu(); }}
           >
             Book a Call
@@ -182,7 +182,7 @@ const CardNav = ({ logo, logoAlt = 'Logo', items = [], ease = 'power3.out' }) =>
           <a
             href="#contact"
             onClick={toggleMenu}
-            className="md:hidden flex items-center justify-center rounded-xl bg-white py-3 text-slate-950 text-sm font-semibold shadow-[0_6px_24px_rgba(255,255,255,0.1)] transition hover:opacity-90"
+            className="md:hidden flex items-center justify-center rounded-xl bg-gradient-to-r from-amber-300 to-amber-400 py-3 text-slate-950 text-sm font-semibold shadow-[0_6px_24px_rgba(251,191,36,0.25)] transition hover:opacity-90"
           >
             Book a Call
           </a>

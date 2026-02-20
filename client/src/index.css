@@ -17,8 +17,8 @@ body,
 
 body {
   font-family: var(--font-sans);
-  background: #0b1220;
-  color: #e2e8f0;
+  background: #000000;
+  color: #ffffff;
   text-rendering: optimizeLegibility;
 }
 
@@ -64,5 +64,5 @@ body {
 
 .press-pill:hover {
   transform: translateY(-4px) scale(1.04);
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(251, 191, 36, 0.45);
 }

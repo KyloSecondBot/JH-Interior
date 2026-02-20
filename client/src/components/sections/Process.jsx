@@ -72,7 +72,7 @@ export default function Process() {
           viewport={{ once: true, margin: '-10%' }}
           transition={{ duration: 0.55 }}
         >
-          <p className="text-xs uppercase tracking-[0.3em] text-white/40">Working Process</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-amber-300/70">Working Process</p>
           <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <h2 className="text-3xl font-semibold text-white sm:text-4xl">
               How we bring your space to life.
@@ -87,7 +87,7 @@ export default function Process() {
           {/* Connector line — desktop only */}
           <div className="pointer-events-none absolute left-0 right-0 top-[44px] hidden h-px lg:block overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
+              className="h-full bg-gradient-to-r from-transparent via-amber-400/30 to-transparent"
               initial={{ scaleX: 0, originX: 0 }}
               whileInView={{ scaleX: 1 }}
               viewport={{ once: true, margin: '-5%' }}

@@ -24,7 +24,13 @@
       "Bash(git pull:*)",
       "Bash(npm run build:*)",
       "mcp__motion__generate-css-spring",
-      "WebFetch(domain:www.jhinterior.id)"
+      "WebFetch(domain:www.jhinterior.id)",
+      "Bash(claude mcp add:*)",
+      "Bash(test:*)",
+      "mcp__ide__getDiagnostics",
+      "Bash(curl:*)",
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__apply_migration"
     ]
   },
   "enableAllProjectMcpServers": true,

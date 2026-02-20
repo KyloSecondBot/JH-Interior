@@ -27,7 +27,7 @@ export default function SocialLinks({ className = '' }) {
         target="_blank"
         rel="noreferrer"
         aria-label="JHInterior on Instagram"
-        className="group inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-white transition hover:-translate-y-[1px] hover:border-white/30 hover:text-white hover:bg-white/10"
+        className="group inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-white transition hover:-translate-y-[1px] hover:border-amber-400/50 hover:text-amber-300 hover:bg-amber-400/8"
       >
         <InstagramIcon />
       </a>
@@ -36,7 +36,7 @@ export default function SocialLinks({ className = '' }) {
         target="_blank"
         rel="noreferrer"
         aria-label="JHInterior on TikTok"
-        className="group inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-white transition hover:-translate-y-[1px] hover:border-white/30 hover:text-white hover:bg-white/10"
+        className="group inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 p-2 text-white transition hover:-translate-y-[1px] hover:border-amber-400/50 hover:text-amber-300 hover:bg-amber-400/8"
       >
         <TikTokIcon />
       </a>

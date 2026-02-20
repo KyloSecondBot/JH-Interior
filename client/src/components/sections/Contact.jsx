@@ -1,12 +1,17 @@
 import { motion } from 'framer-motion';
+import { useContact } from '../../hooks/useContact.js';
 
-/* ── Contact details (from jhinterior.id) ── */
-const ADDRESS   = 'Jl. Syekh Mubarok No. 1A, Kelapa Dua, Pete, Tigaraksa Kecamatan, Tangerang, Banten 15720';
-const EMAIL     = 'contact@jhinterior.id';
-const PHONE_DISPLAY = '0852-1558-1607';
-const WA_LINK   = 'https://wa.me/6285215581607?text=Hello%20JH%20Interior%2C%20I%27m%20interested%20in%20your%20interior%20design%20services.';
-const MAPS_EMBED = 'https://maps.google.com/maps?q=Jl.+Syekh+Mubarok+No.+1A,+Kelapa+Dua,+Pete,+Tigaraksa,+Tangerang,+Banten+15720,+Indonesia&output=embed&hl=en&z=16';
-const MAPS_LINK  = 'https://maps.google.com/?q=Jl.+Syekh+Mubarok+No.+1A,+Kelapa+Dua,+Pete,+Tigaraksa,+Tangerang,+Banten+15720,+Indonesia';
+/* ── Static fallback values ── */
+const DEFAULTS = {
+  address:        'Jl. Syekh Mubarok No. 1A, Kelapa Dua, Pete, Tigaraksa Kecamatan, Tangerang, Banten 15720',
+  email:          'contact@jhinterior.id',
+  phone:          '0852-1558-1607',
+  whatsapp_link:  'https://wa.me/6285215581607?text=Hello%20JH%20Interior%2C%20I%27m%20interested%20in%20your%20interior%20design%20services.',
+  maps_embed_url: 'https://maps.google.com/maps?q=Jl.+Syekh+Mubarok+No.+1A,+Kelapa+Dua,+Pete,+Tigaraksa,+Tangerang,+Banten+15720,+Indonesia&output=embed&hl=en&z=16',
+  maps_link:      'https://maps.google.com/?q=Jl.+Syekh+Mubarok+No.+1A,+Kelapa+Dua,+Pete,+Tigaraksa,+Tangerang,+Banten+15720,+Indonesia',
+  business_hours: 'Mon – Sat · 08.00 – 17.00 WIB',
+  location_label: 'Tigaraksa, Tangerang',
+};
 
 /* ── Icon helpers ── */
 function IconLocation() {
@@ -47,18 +52,30 @@ const fadeUp = (delay = 0) => ({
 });
 
 export default function Contact() {
+  const { contact } = useContact();
+  const c = contact ?? DEFAULTS;
+
+  const ADDRESS       = c.address;
+  const EMAIL         = c.email;
+  const PHONE_DISPLAY = c.phone;
+  const WA_LINK       = c.whatsapp_link;
+  const MAPS_EMBED    = c.maps_embed_url;
+  const MAPS_LINK     = c.maps_link;
+  const HOURS         = c.business_hours;
+  const LOC_LABEL     = c.location_label;
+
   return (
     <section id="contact" className="px-6 pb-4">
       <div className="mx-auto max-w-6xl space-y-8">
 
         {/* ── Header ── */}
         <motion.div {...fadeUp(0)}>
-          <p className="text-xs uppercase tracking-[0.3em] text-white/50">Contact Us</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-amber-300/70">Contact Us</p>
           <div className="mt-2 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <h2 className="text-3xl font-semibold text-white sm:text-4xl">
               Let's start a conversation.
             </h2>
-            <p className="text-sm text-slate-400/70">We respond within 24 hours.</p>
+            <p className="text-sm text-white/35">We respond within 24 hours.</p>
           </div>
         </motion.div>
 
@@ -71,7 +88,7 @@ export default function Contact() {
             className="relative overflow-hidden rounded-[28px] border border-white/10 bg-gradient-to-br from-white/8 via-white/4 to-white/0 p-8 shadow-[0_20px_60px_rgba(0,0,0,0.3)]"
           >
             {/* Ambient glow */}
-            <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-white/5 blur-3xl" />
+            <div className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-amber-400/8 blur-3xl" />
 
             <div className="relative flex flex-col gap-7">
               {/* Address */}
@@ -79,15 +96,15 @@ export default function Contact() {
                 href={MAPS_LINK}
                 target="_blank"
                 rel="noreferrer"
-                className="group flex items-start gap-4 text-slate-300/80 transition hover:text-white"
+                className="group flex items-start gap-4 text-white/65 transition hover:text-white"
               >
-                <span className="mt-0.5 text-white/60">
+                <span className="mt-0.5 text-amber-400/80">
                   <IconLocation />
                 </span>
                 <div>
-                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">Office Address</p>
+                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/28">Office Address</p>
                   <p className="text-sm leading-relaxed">{ADDRESS}</p>
-                  <p className="mt-1.5 text-[11px] font-semibold text-white/45 transition group-hover:text-white/80">
+                  <p className="mt-1.5 text-[11px] font-semibold text-amber-400/55 transition group-hover:text-amber-400">
                     Open in Google Maps →
                   </p>
                 </div>
@@ -98,13 +115,13 @@ export default function Contact() {
               {/* Email */}
               <a
                 href={`mailto:${EMAIL}`}
-                className="group flex items-center gap-4 text-slate-300/80 transition hover:text-white"
+                className="group flex items-center gap-4 text-white/65 transition hover:text-white"
               >
-                <span className="text-white/60">
+                <span className="text-amber-400/80">
                   <IconMail />
                 </span>
                 <div>
-                  <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">Email</p>
+                  <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/28">Email</p>
                   <p className="text-sm font-medium">{EMAIL}</p>
                 </div>
               </a>
@@ -114,20 +131,20 @@ export default function Contact() {
               {/* Phone */}
               <a
                 href={`tel:+62${PHONE_DISPLAY.replace(/-/g, '').slice(1)}`}
-                className="group flex items-center gap-4 text-slate-300/80 transition hover:text-white"
+                className="group flex items-center gap-4 text-white/65 transition hover:text-white"
               >
-                <span className="text-white/60">
+                <span className="text-amber-400/80">
                   <IconPhone />
                 </span>
                 <div>
-                  <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-slate-500">Phone</p>
+                  <p className="mb-0.5 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/28">Phone</p>
                   <p className="text-sm font-medium">{PHONE_DISPLAY}</p>
                 </div>
               </a>
 
               <div className="h-px bg-white/8" />
 
-              {/* WhatsApp CTA — Motion MCP spring: 450ms linear(0, 0.2459, ...) */}
+              {/* WhatsApp CTA */}
               <motion.a
                 href={WA_LINK}
                 target="_blank"
@@ -140,8 +157,8 @@ export default function Contact() {
                 Chat on WhatsApp
               </motion.a>
 
-              <p className="text-center text-[11px] text-slate-500">
-                Mon – Sat · 08.00 – 17.00 WIB
+              <p className="text-center text-[11px] text-white/28">
+                {HOURS}
               </p>
             </div>
           </motion.div>
@@ -153,9 +170,9 @@ export default function Contact() {
             style={{ minHeight: '420px' }}
           >
             {/* Overlay label */}
-            <div className="pointer-events-none absolute left-4 top-4 z-10 rounded-xl border border-white/15 bg-slate-950/75 px-3.5 py-2 backdrop-blur-md">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/70">Studio Location</p>
-              <p className="mt-0.5 text-xs text-slate-300/70">Tigaraksa, Tangerang</p>
+            <div className="pointer-events-none absolute left-4 top-4 z-10 rounded-xl border border-white/15 bg-black/80 px-3.5 py-2 backdrop-blur-md">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-300/80">Studio Location</p>
+              <p className="mt-0.5 text-xs text-white/55">{LOC_LABEL}</p>
             </div>
 
             {/* "Open in Maps" shortcut */}
@@ -163,7 +180,7 @@ export default function Contact() {
               href={MAPS_LINK}
               target="_blank"
               rel="noreferrer"
-              className="absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded-xl border border-white/15 bg-slate-950/75 px-3.5 py-2 text-[11px] font-semibold text-white/80 backdrop-blur-md transition hover:text-white"
+              className="absolute bottom-4 right-4 z-10 flex items-center gap-2 rounded-xl border border-white/15 bg-black/80 px-3.5 py-2 text-[11px] font-semibold text-white/80 backdrop-blur-md transition hover:text-white"
             >
               <IconLocation />
               View larger map

@@ -71,12 +71,12 @@ export default function About() {
           viewport={{ once: true, margin: '-10%' }}
           transition={{ duration: 0.55 }}
         >
-          <p className="text-xs uppercase tracking-[0.3em] text-white/50">About JH Interior</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-amber-300/70">About JH Interior</p>
           <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <h2 className="max-w-xl text-3xl font-semibold text-white sm:text-4xl">
               Indonesia's leading design &amp; build interior company.
             </h2>
-            <p className="text-sm text-slate-400/70 sm:text-right sm:max-w-xs">Est. 1999 · Jakarta, Indonesia</p>
+            <p className="text-sm text-white/35 sm:text-right sm:max-w-xs">Est. 1999 · Jakarta, Indonesia</p>
           </div>
         </motion.div>
 
@@ -87,7 +87,7 @@ export default function About() {
             className="pointer-events-none absolute inset-0 opacity-40"
             style={{
               backgroundImage:
-                'radial-gradient(circle at 15% 40%, rgba(255,255,255,0.07), transparent 40%), radial-gradient(circle at 85% 20%, rgba(255,255,255,0.04), transparent 38%)',
+                'radial-gradient(circle at 15% 40%, rgba(251,191,36,0.1), transparent 40%), radial-gradient(circle at 85% 20%, rgba(251,191,36,0.06), transparent 38%)',
             }}
           />
 
@@ -100,16 +100,16 @@ export default function About() {
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
               className="flex flex-col justify-center gap-5 px-8 py-10 sm:px-10 lg:py-12"
             >
-              <p className="text-base leading-relaxed text-slate-200/85 sm:text-lg">
+              <p className="text-base leading-relaxed text-white/80 sm:text-lg">
                 With promising quality and results, JH Interior delivers exceptional solutions to meet
                 the demand for <span className="font-semibold text-white">luxury home interiors</span>.
               </p>
-              <p className="text-base leading-relaxed text-slate-300/70">
-                With more than <span className="font-semibold text-white">200 highly skilled personnel</span> and
+              <p className="text-base leading-relaxed text-white/60">
+                With more than <span className="font-semibold text-amber-300">200 highly skilled personnel</span> and
                 nationwide services, we are committed to transforming every space into an experience that endures —
                 from concept and material selection through fabrication, installation, and final styling.
               </p>
-              <p className="text-base leading-relaxed text-slate-300/70">
+              <p className="text-base leading-relaxed text-white/60">
                 From intimate residences in Jakarta to landmark hospitality spaces across the archipelago,
                 our full-stack design pipeline brings each vision to life with the precision of a product studio
                 and the soul of a design house.
@@ -133,12 +133,12 @@ export default function About() {
                   transition={{ duration: 0.45, delay: 0.1 + i * 0.07 }}
                   className="group flex flex-col gap-3 border-white/8 bg-white/3 p-6 transition hover:bg-white/6 [&:nth-child(odd)]:border-r [&:nth-child(-n+2)]:border-b"
                 >
-                  <span className="text-white/50 transition group-hover:text-white">
+                  <span className="text-amber-300/60 transition group-hover:text-amber-300">
                     {p.icon}
                   </span>
                   <div>
                     <p className="font-display text-2xl font-semibold text-white">{p.label}</p>
-                    <p className="mt-0.5 text-xs text-slate-400">{p.desc}</p>
+                    <p className="mt-0.5 text-xs text-white/38">{p.desc}</p>
                   </div>
                 </motion.div>
               ))}
@@ -154,7 +154,7 @@ export default function About() {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="space-y-5"
         >
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.32em] text-slate-400/70">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.32em] text-white/35">
             As Featured In
           </p>
 
@@ -164,7 +164,7 @@ export default function About() {
           {/* ── Row 2: scrolls right (reversed order for contrast) ── */}
           <PressRow logos={[...PRESS].reverse()} className="press-track-reverse" />
 
-          <p className="text-center text-xs text-slate-500/60">And many more global publications.</p>
+          <p className="text-center text-xs text-white/28">And many more global publications.</p>
         </motion.div>
 
       </div>
@@ -176,8 +176,8 @@ export default function About() {
 function PressRow({ logos, className }) {
   return (
     <div className="relative overflow-hidden py-1">
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-slate-950 to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-slate-950 to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-28 bg-gradient-to-r from-black to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-28 bg-gradient-to-l from-black to-transparent" />
       <div className={`${className} flex w-max items-center gap-4`}>
         {[...logos, ...logos].map((logo, i) => (
           <PressCard key={i} logo={logo} />
