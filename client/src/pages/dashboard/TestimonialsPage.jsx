@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, X } from 'lucide-react';
 import { useTestimonials } from '../../hooks/useTestimonials';
+import { useUnsavedGuard } from '../../hooks/useUnsavedGuard';
+import UnsavedModal from '../../components/dashboard/UnsavedModal';
 import DataTable from '../../components/dashboard/DataTable';
 
 const EMPTY = { name: '', title: '', quote: '', sort_order: 0 };
@@ -24,16 +26,25 @@ export default function TestimonialsPage() {
   const [saving, setSaving]   = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [error, setError]   = useState(null);
+  useUnsavedGuard(drawerOpen);
+  const [showDiscard, setShowDiscard] = useState(false);
+  const initialFormRef = useRef(null);
+
+  function isDirty() { return JSON.stringify(form) !== JSON.stringify(initialFormRef.current); }
+  function closeDrawer() { setDrawerOpen(false); setShowDiscard(false); }
+  function tryClose() { if (isDirty()) setShowDiscard(true); else closeDrawer(); }
 
   function openAdd() {
     setForm(EMPTY);
+    initialFormRef.current = EMPTY;
     setEditing(null);
     setDrawerOpen(true);
     setError(null);
   }
 
   function openEdit(row) {
-    setForm({ name: row.name, title: row.title, quote: row.quote, sort_order: row.sort_order });
+    const f = { name: row.name, title: row.title, quote: row.quote, sort_order: row.sort_order };
+    setForm(f); initialFormRef.current = f;
     setEditing(row.id);
     setDrawerOpen(true);
     setError(null);
@@ -49,7 +60,7 @@ export default function TestimonialsPage() {
       } else {
         await addTestimonial(form);
       }
-      setDrawerOpen(false);
+      closeDrawer();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -100,7 +111,7 @@ export default function TestimonialsPage() {
       {/* Slide-over form */}
       {drawerOpen && (
         <div className="fixed inset-0 z-40 flex">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={tryClose} />
           <motion.aside
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -110,7 +121,7 @@ export default function TestimonialsPage() {
           >
             <div className="flex items-center justify-between border-b border-white/8 px-6 py-4">
               <h3 className="font-semibold text-white">{editing ? 'Edit Testimonial' : 'Add Testimonial'}</h3>
-              <button onClick={() => setDrawerOpen(false)} className="text-white/40 hover:text-white transition">
+              <button onClick={tryClose} className="text-white/40 hover:text-white transition">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -132,7 +143,7 @@ export default function TestimonialsPage() {
               {error && <p className="text-sm text-red-400">{error}</p>}
 
               <div className="mt-auto flex gap-3">
-                <button type="button" onClick={() => setDrawerOpen(false)} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>
+                <button type="button" onClick={tryClose} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>
                 <button type="submit" disabled={saving} className="flex-1 rounded-xl bg-amber-400 py-2.5 text-sm font-semibold text-black transition hover:bg-amber-300 disabled:opacity-50">
                   {saving ? 'Saving…' : 'Save'}
                 </button>
@@ -140,6 +151,17 @@ export default function TestimonialsPage() {
             </form>
           </motion.aside>
         </div>
+      )}
+
+      {showDiscard && (
+        <UnsavedModal
+          title="Discard changes?"
+          message="Your unsaved edits will be lost."
+          leaveLabel="Discard"
+          stayLabel="Keep editing"
+          onLeave={closeDrawer}
+          onStay={() => setShowDiscard(false)}
+        />
       )}
     </div>
   );

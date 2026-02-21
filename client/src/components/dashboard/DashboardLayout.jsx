@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import DashboardSidebar from './DashboardSidebar';
+import { UnsavedChangesProvider, useUnsavedChanges } from '../../context/UnsavedChangesContext';
+import UnsavedModal from './UnsavedModal';
 
 const pageTitle = {
   '/dashboard':              'Overview',
@@ -15,9 +17,24 @@ const pageTitle = {
   '/dashboard/contact':      'Contact',
 };
 
-export default function DashboardLayout() {
+// Inner component lives inside the provider so it can read context
+function DashboardInner() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { pendingAction, setPendingAction, setIsDirty } = useUnsavedChanges();
+
+  function confirmLeave() {
+    setIsDirty(false);
+    const action = pendingAction;
+    setPendingAction(null);
+    setSidebarOpen(false);
+    action?.();
+  }
+
+  function cancelLeave() {
+    setPendingAction(null);
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#080808] text-white font-sans">
@@ -52,7 +69,6 @@ export default function DashboardLayout() {
 
       {/* ── Main content ── */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Top bar */}
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/8 px-5">
           <div className="flex items-center gap-3">
             <button
@@ -70,11 +86,23 @@ export default function DashboardLayout() {
           </span>
         </header>
 
-        {/* Scrollable page content */}
         <main className="flex-1 overflow-y-auto px-5 py-6 lg:px-8">
           <Outlet />
         </main>
       </div>
+
+      {/* ── Unsaved changes modal ── */}
+      {pendingAction && (
+        <UnsavedModal onLeave={confirmLeave} onStay={cancelLeave} />
+      )}
     </div>
+  );
+}
+
+export default function DashboardLayout() {
+  return (
+    <UnsavedChangesProvider>
+      <DashboardInner />
+    </UnsavedChangesProvider>
   );
 }

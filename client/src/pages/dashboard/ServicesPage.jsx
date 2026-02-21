@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, X } from 'lucide-react';
 import { useServices } from '../../hooks/useServices';
+import { useUnsavedGuard } from '../../hooks/useUnsavedGuard';
 import DataTable from '../../components/dashboard/DataTable';
+import UnsavedModal from '../../components/dashboard/UnsavedModal';
 
 const EMPTY = { title: '', bullet_1: '', bullet_2: '', bullet_3: '', sort_order: 0 };
 const inputCls = 'rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder-white/25 outline-none focus:border-amber-400/50 transition';
@@ -23,13 +25,20 @@ export default function ServicesPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [saving, setSaving]     = useState(false);
   const [error, setError]       = useState(null);
+  const [showDiscard, setShowDiscard] = useState(false);
+  const initialFormRef = useRef(null);
+  useUnsavedGuard(drawerOpen);
 
   function s(key) { return (e) => setForm((f) => ({ ...f, [key]: e.target.value })); }
 
-  function openAdd() { setForm(EMPTY); setEditing(null); setDrawerOpen(true); setError(null); }
+  function isDirty() { return JSON.stringify(form) !== JSON.stringify(initialFormRef.current); }
+  function closeDrawer() { setDrawerOpen(false); setShowDiscard(false); }
+  function tryClose() { if (isDirty()) setShowDiscard(true); else closeDrawer(); }
+
+  function openAdd() { setForm(EMPTY); initialFormRef.current = EMPTY; setEditing(null); setDrawerOpen(true); setError(null); }
   function openEdit(row) {
-    setForm({ title: row.title, bullet_1: row.bullet_1, bullet_2: row.bullet_2, bullet_3: row.bullet_3, sort_order: row.sort_order });
-    setEditing(row.id); setDrawerOpen(true); setError(null);
+    const f = { title: row.title, bullet_1: row.bullet_1, bullet_2: row.bullet_2, bullet_3: row.bullet_3, sort_order: row.sort_order };
+    setForm(f); initialFormRef.current = f; setEditing(row.id); setDrawerOpen(true); setError(null);
   }
 
   async function handleSave(e) {
@@ -38,7 +47,7 @@ export default function ServicesPage() {
     try {
       if (editing) await updateService(editing, form);
       else await addService(form);
-      setDrawerOpen(false);
+      closeDrawer();
     } catch (err) { setError(err.message); }
     finally { setSaving(false); }
   }
@@ -68,7 +77,7 @@ export default function ServicesPage() {
 
       {drawerOpen && (
         <div className="fixed inset-0 z-40 flex">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setDrawerOpen(false)} />
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={tryClose} />
           <motion.aside
             initial={{ x: '100%' }} animate={{ x: 0 }}
             transition={{ type: 'spring', stiffness: 380, damping: 34 }}
@@ -76,7 +85,7 @@ export default function ServicesPage() {
           >
             <div className="flex items-center justify-between border-b border-white/8 px-6 py-4">
               <h3 className="font-semibold text-white">{editing ? 'Edit Service' : 'Add Service'}</h3>
-              <button onClick={() => setDrawerOpen(false)} className="text-white/40 hover:text-white transition"><X className="h-5 w-5" /></button>
+              <button onClick={tryClose} className="text-white/40 hover:text-white transition"><X className="h-5 w-5" /></button>
             </div>
             <form onSubmit={handleSave} className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
               <Field label="Title">
@@ -96,7 +105,7 @@ export default function ServicesPage() {
               </Field>
               {error && <p className="text-sm text-red-400">{error}</p>}
               <div className="mt-auto flex gap-3">
-                <button type="button" onClick={() => setDrawerOpen(false)} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>
+                <button type="button" onClick={tryClose} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>
                 <button type="submit" disabled={saving} className="flex-1 rounded-xl bg-amber-400 py-2.5 text-sm font-semibold text-black transition hover:bg-amber-300 disabled:opacity-50">
                   {saving ? 'Saving…' : 'Save'}
                 </button>
@@ -104,6 +113,16 @@ export default function ServicesPage() {
             </form>
           </motion.aside>
         </div>
+      )}
+      {showDiscard && (
+        <UnsavedModal
+          title="Discard changes?"
+          message="Your unsaved edits will be lost."
+          leaveLabel="Discard"
+          stayLabel="Keep editing"
+          onLeave={closeDrawer}
+          onStay={() => setShowDiscard(false)}
+        />
       )}
     </div>
   );

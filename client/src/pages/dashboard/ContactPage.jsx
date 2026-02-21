@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useContact } from '../../hooks/useContact';
+import { useUnsavedGuard } from '../../hooks/useUnsavedGuard';
 
 const inputCls = 'w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder-white/25 outline-none focus:border-amber-400/50 transition';
 
@@ -20,13 +21,15 @@ export default function ContactPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved]   = useState(false);
   const [error, setError]   = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+  useUnsavedGuard(isDirty);
 
   useEffect(() => {
     if (contact) setForm({ ...contact });
   }, [contact]);
 
   function set(key) {
-    return (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+    return (e) => { setIsDirty(true); setForm((f) => ({ ...f, [key]: e.target.value })); };
   }
 
   async function handleSave(e) {
@@ -36,6 +39,7 @@ export default function ContactPage() {
     setError(null);
     try {
       await updateContact(form);
+      setIsDirty(false);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch (err) {

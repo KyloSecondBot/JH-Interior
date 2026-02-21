@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Images, Trash2, Upload, ImageOff } from 'lucide-react';
 import { usePortfolio } from '../../hooks/usePortfolio';
+import { useUnsavedGuard } from '../../hooks/useUnsavedGuard';
 import DataTable from '../../components/dashboard/DataTable';
+import UnsavedModal from '../../components/dashboard/UnsavedModal';
 import ImageUploader from '../../components/dashboard/ImageUploader';
 
 /* ── Shared styles ── */
@@ -372,16 +374,31 @@ export default function PortfolioPage() {
   const [galDrawer, setGalDrawer]     = useState(false);
   const [galSaving, setGalSaving]     = useState(false);
   const [galError, setGalError]       = useState(null);
+  useUnsavedGuard(projDrawer || galDrawer || !!photoModalId);
+
+  // Discard guards — proj drawer
+  const initialProjRef = useRef(null);
+  const [showDiscardProj, setShowDiscardProj] = useState(false);
+  function isProjDirty() { return JSON.stringify(projForm) !== JSON.stringify(initialProjRef.current); }
+  function closeProjDrawer() { setProjDrawer(false); setShowDiscardProj(false); }
+  function tryCloseProj() { if (isProjDirty()) setShowDiscardProj(true); else closeProjDrawer(); }
+
+  // Discard guards — gallery drawer
+  const initialGalRef = useRef(null);
+  const [showDiscardGal, setShowDiscardGal] = useState(false);
+  function isGalDirty() { return JSON.stringify(galForm) !== JSON.stringify(initialGalRef.current); }
+  function closeGalDrawer() { setGalDrawer(false); setShowDiscardGal(false); }
+  function tryCloseGal() { if (isGalDirty()) setShowDiscardGal(true); else closeGalDrawer(); }
 
   /* ── Project handlers ── */
   function openAddProj() {
-    setProjForm(EMPTY_PROJECT);
+    setProjForm(EMPTY_PROJECT); initialProjRef.current = EMPTY_PROJECT;
     setEditingProj(null);
     setProjDrawer(true);
     setProjError(null);
   }
   function openEditProj(row) {
-    setProjForm({
+    const f = {
       title: row.title, location: row.location, type: row.type, summary: row.summary,
       metric_label: row.metric_label, metric_value: row.metric_value,
       image_url: row.image_url,
@@ -389,7 +406,8 @@ export default function PortfolioPage() {
       accent_color: row.accent_color,
       sort_order: row.sort_order,
       tags: row.portfolio_tags?.map((t) => t.tag) ?? [],
-    });
+    };
+    setProjForm(f); initialProjRef.current = f;
     setEditingProj(row.id);
     setProjDrawer(true);
     setProjError(null);
@@ -401,7 +419,7 @@ export default function PortfolioPage() {
     try {
       if (editingProj) await updateProject(editingProj, projForm);
       else await addProject(projForm);
-      setProjDrawer(false);
+      closeProjDrawer();
     } catch (err) {
       setProjError(err.message);
     } finally {
@@ -411,13 +429,14 @@ export default function PortfolioPage() {
 
   /* ── Gallery handlers ── */
   function openAddGal() {
-    setGalForm(EMPTY_GALLERY);
+    setGalForm(EMPTY_GALLERY); initialGalRef.current = EMPTY_GALLERY;
     setEditingGal(null);
     setGalDrawer(true);
     setGalError(null);
   }
   function openEditGal(row) {
-    setGalForm({ title: row.title, caption: row.caption, image_url: row.image_url, tone_gradient: row.tone_gradient, sort_order: row.sort_order });
+    const f = { title: row.title, caption: row.caption, image_url: row.image_url, tone_gradient: row.tone_gradient, sort_order: row.sort_order };
+    setGalForm(f); initialGalRef.current = f;
     setEditingGal(row.id);
     setGalDrawer(true);
     setGalError(null);
@@ -429,7 +448,7 @@ export default function PortfolioPage() {
     try {
       if (editingGal) await updateGalleryItem(editingGal, galForm);
       else await addGalleryItem(galForm);
-      setGalDrawer(false);
+      closeGalDrawer();
     } catch (err) {
       setGalError(err.message);
     } finally {
@@ -505,7 +524,7 @@ export default function PortfolioPage() {
       )}
 
       {/* ── Project drawer ── */}
-      <Drawer title={editingProj ? 'Edit Project' : 'Add Project'} open={projDrawer} onClose={() => setProjDrawer(false)}>
+      <Drawer title={editingProj ? 'Edit Project' : 'Add Project'} open={projDrawer} onClose={tryCloseProj}>
         <form onSubmit={handleSaveProj} className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
           <Field label="Title">
             <input className={inputCls} value={projForm.title} required onChange={(e) => setProjForm((f) => ({ ...f, title: e.target.value }))} placeholder="Halo Suites" />
@@ -570,7 +589,7 @@ export default function PortfolioPage() {
 
           {projError && <p className="text-sm text-red-400">{projError}</p>}
           <div className="mt-auto flex gap-3">
-            <button type="button" onClick={() => setProjDrawer(false)} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>
+            <button type="button" onClick={tryCloseProj} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>
             <button type="submit" disabled={projSaving} className="flex-1 rounded-xl bg-amber-400 py-2.5 text-sm font-semibold text-black transition hover:bg-amber-300 disabled:opacity-50">
               {projSaving ? 'Saving…' : 'Save'}
             </button>
@@ -579,7 +598,7 @@ export default function PortfolioPage() {
       </Drawer>
 
       {/* ── Gallery drawer ── */}
-      <Drawer title={editingGal ? 'Edit Gallery Item' : 'Add Gallery Item'} open={galDrawer} onClose={() => setGalDrawer(false)}>
+      <Drawer title={editingGal ? 'Edit Gallery Item' : 'Add Gallery Item'} open={galDrawer} onClose={tryCloseGal}>
         <form onSubmit={handleSaveGal} className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
           <Field label="Title">
             <input className={inputCls} value={galForm.title} required onChange={(e) => setGalForm((f) => ({ ...f, title: e.target.value }))} placeholder="Drift Spa" />
@@ -599,7 +618,7 @@ export default function PortfolioPage() {
 
           {galError && <p className="text-sm text-red-400">{galError}</p>}
           <div className="mt-auto flex gap-3">
-            <button type="button" onClick={() => setGalDrawer(false)} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>
+            <button type="button" onClick={tryCloseGal} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>
             <button type="submit" disabled={galSaving} className="flex-1 rounded-xl bg-amber-400 py-2.5 text-sm font-semibold text-black transition hover:bg-amber-300 disabled:opacity-50">
               {galSaving ? 'Saving…' : 'Save'}
             </button>
@@ -620,6 +639,26 @@ export default function PortfolioPage() {
           />
         )}
       </AnimatePresence>
+      {showDiscardProj && (
+        <UnsavedModal
+          title="Discard changes?"
+          message="Your unsaved edits will be lost."
+          leaveLabel="Discard"
+          stayLabel="Keep editing"
+          onLeave={closeProjDrawer}
+          onStay={() => setShowDiscardProj(false)}
+        />
+      )}
+      {showDiscardGal && (
+        <UnsavedModal
+          title="Discard changes?"
+          message="Your unsaved edits will be lost."
+          leaveLabel="Discard"
+          stayLabel="Keep editing"
+          onLeave={closeGalDrawer}
+          onStay={() => setShowDiscardGal(false)}
+        />
+      )}
     </div>
   );
 }

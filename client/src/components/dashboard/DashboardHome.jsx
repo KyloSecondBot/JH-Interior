@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Image, Layers, Quote, BarChart2, MapPin, ArrowRight } from 'lucide-react';
+import { Image, Layers, Quote, BarChart2, MapPin, ArrowRight, Briefcase, ListOrdered } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 const cards = [
-  { label: 'Portfolio Projects', icon: Image,    href: '/dashboard/portfolio',    table: 'portfolio_projects' },
-  { label: 'Work Stack',         icon: Layers,   href: '/dashboard/workstack',    table: 'workstack_projects' },
-  { label: 'Testimonials',       icon: Quote,    href: '/dashboard/testimonials', table: 'testimonials' },
-  { label: 'Stats',              icon: BarChart2,href: '/dashboard/stats',        table: 'studio_stats' },
+  { label: 'Portfolio Projects', icon: Image,        href: '/dashboard/portfolio',    table: 'portfolio_projects' },
+  { label: 'Work Stack',         icon: Layers,       href: '/dashboard/workstack',    table: 'workstack_projects' },
+  { label: 'Services',           icon: Briefcase,    href: '/dashboard/services',     table: 'services' },
+  { label: 'Process Steps',      icon: ListOrdered,  href: '/dashboard/process',      table: 'process_steps' },
+  { label: 'Testimonials',       icon: Quote,        href: '/dashboard/testimonials', table: 'testimonials' },
+  { label: 'Stats',              icon: BarChart2,    href: '/dashboard/stats',        table: 'studio_stats' },
 ];
 
 function StatCard({ label, icon: Icon, href, table, delay }) {

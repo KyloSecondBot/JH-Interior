@@ -4,6 +4,7 @@ import {
   Briefcase, ListOrdered, ArrowLeft, LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useUnsavedChanges } from '../../context/UnsavedChangesContext';
 
 const nav = [
   { label: 'Overview',     href: '/dashboard',              icon: LayoutDashboard, end: true },
@@ -17,11 +18,23 @@ const nav = [
 ];
 
 function NavItem({ href, icon: Icon, label, end, onClose }) {
+  const { isDirty, setPendingAction } = useUnsavedChanges();
+  const navigate = useNavigate();
+
+  function handleClick(e) {
+    if (isDirty) {
+      e.preventDefault();
+      setPendingAction(() => () => { onClose?.(); navigate(href); });
+    } else {
+      onClose?.();
+    }
+  }
+
   return (
     <NavLink
       to={href}
       end={end}
-      onClick={onClose}
+      onClick={handleClick}
       className={({ isActive }) =>
         `flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all
          ${isActive
@@ -38,8 +51,26 @@ function NavItem({ href, icon: Icon, label, end, onClose }) {
 export default function DashboardSidebar({ onClose }) {
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const { isDirty, setPendingAction } = useUnsavedChanges();
+
+  function handleBackToSite(e) {
+    if (isDirty) {
+      e.preventDefault();
+      setPendingAction(() => () => { onClose?.(); navigate('/'); });
+    } else {
+      onClose?.();
+    }
+  }
 
   async function handleSignOut() {
+    if (isDirty) {
+      setPendingAction(() => async () => {
+        onClose?.();
+        await signOut();
+        navigate('/');
+      });
+      return;
+    }
     onClose?.();
     await signOut();
     navigate('/');
@@ -68,7 +99,7 @@ export default function DashboardSidebar({ onClose }) {
       <div className="px-3 py-4 space-y-0.5">
         <NavLink
           to="/"
-          onClick={onClose}
+          onClick={handleBackToSite}
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white/45 transition hover:bg-white/5 hover:text-white/80"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
