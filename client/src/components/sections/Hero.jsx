@@ -1,6 +1,8 @@
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { supabase } from '../../lib/supabase';
 
-// Mosaic images — above the fold (LCP)
+// Mosaic fallback images — above the fold (LCP)
 import img11 from '../../assets/1.1.webp';
 import img21 from '../../assets/2.1.webp';
 import img13 from '../../assets/1.3.webp';
@@ -16,7 +18,11 @@ import img26 from '../../assets/2.6.webp';
 import img27 from '../../assets/2.7.webp';
 import img28 from '../../assets/2.8.webp';
 
+const FALLBACK_POOL = [img11, img21, img13, img12, img22, img14, img23, img15, img24];
 const MARQUEE_IMAGES = [img12, img22, img14, img23, img15, img24, img26, img27, img28];
+
+// staggered switch intervals per card (ms)
+const CARD_INTERVALS = [5400, 7200, 6100];
 
 const HEADLINE_LINES = [
   { text: 'Spaces That', accent: false },
@@ -24,8 +30,62 @@ const HEADLINE_LINES = [
   { text: 'You Live.', accent: false },
 ];
 
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export default function Hero() {
   const reduce = useReducedMotion();
+  const [pool, setPool] = useState(() => shuffle(FALLBACK_POOL));
+  const [indices, setIndices] = useState([0, 1, 2]);
+
+  // Fetch live photos from Supabase (project covers + gallery images)
+  useEffect(() => {
+    async function load() {
+      try {
+        const [{ data: projects }, { data: gallery }] = await Promise.all([
+          supabase.from('portfolio_projects').select('image_url').order('sort_order'),
+          supabase.from('portfolio_gallery').select('image_url').order('sort_order'),
+        ]);
+        const urls = [
+          ...(projects ?? []).map((p) => p.image_url),
+          ...(gallery ?? []).map((g) => g.image_url),
+        ].filter(Boolean);
+        if (urls.length >= 3) {
+          const shuffled = shuffle(urls);
+          const len = shuffled.length;
+          // Spread starting positions evenly so cards show different photos
+          setPool(shuffled);
+          setIndices([0, Math.floor(len / 3), Math.floor((2 * len) / 3)]);
+        }
+      } catch {
+        // keep fallback
+      }
+    }
+    load();
+  }, []);
+
+  // Cycle each card independently at staggered intervals
+  useEffect(() => {
+    if (reduce || pool.length < 3) return;
+    const timers = CARD_INTERVALS.map((ms, card) =>
+      setInterval(() => {
+        setIndices((prev) => {
+          const next = [...prev];
+          next[card] = (prev[card] + 1) % pool.length;
+          return next;
+        });
+      }, ms),
+    );
+    return () => timers.forEach(clearInterval);
+  }, [pool, reduce]);
+
+  const srcs = indices.map((i) => pool[i]);
 
   return (
     <section id="top" className="relative overflow-hidden px-5 pb-0 pt-24 sm:px-8 sm:pt-28 lg:px-12 lg:pt-32">
@@ -44,7 +104,7 @@ export default function Hero() {
             className="inline-flex w-fit items-center gap-2.5 rounded-full border border-amber-400/20 bg-amber-400/8 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-amber-300/80"
           >
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-            Interior Design Studio · Est. 1999  
+            Interior Design Studio · Est. 1999
           </motion.div>
 
           {/* Headline — clip reveal per line */}
@@ -131,24 +191,29 @@ export default function Hero() {
 
           {/* Card 1 — tall, spans both rows */}
           <motion.div
-            className="relative row-span-2 overflow-hidden rounded-3xl"
+            className="relative row-span-2 overflow-hidden rounded-3xl bg-zinc-900"
             initial={reduce ? false : { opacity: 0, x: 48 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.12 }}
           >
-            <motion.img
-              src={img11}
-              alt="Luxury residence designed by JH Interior"
-              className="h-full w-full object-cover"
-              loading="eager"
-              fetchPriority="high"
-              animate={reduce ? {} : { scale: [1, 1.04, 1] }}
-              transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-slate-950/10 to-transparent" />
+            <AnimatePresence mode="sync">
+              <motion.img
+                key={srcs[0]}
+                src={srcs[0]}
+                alt="Luxury residence designed by JH Interior"
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="eager"
+                fetchPriority="high"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.2, ease: 'easeInOut' }}
+              />
+            </AnimatePresence>
+            <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/75 via-slate-950/10 to-transparent" />
             {/* Floating info pill */}
             <motion.div
-              className="absolute bottom-4 left-4 right-4"
+              className="absolute bottom-4 left-4 right-4 z-20"
               animate={reduce ? {} : { y: [0, -4, 0] }}
               transition={{ duration: 5.2, repeat: Infinity, ease: 'easeInOut' }}
             >
@@ -161,37 +226,51 @@ export default function Hero() {
 
           {/* Card 2 — top right */}
           <motion.div
-            className="relative overflow-hidden rounded-3xl"
+            className="relative overflow-hidden rounded-3xl bg-zinc-900"
             initial={reduce ? false : { opacity: 0, x: 48 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.26 }}
           >
-            <img
-              src={img21}
-              alt="JH Interior boutique hospitality space"
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-slate-950/45" />
+            <AnimatePresence mode="sync">
+              <motion.img
+                key={srcs[1]}
+                src={srcs[1]}
+                alt="JH Interior boutique hospitality space"
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.2, ease: 'easeInOut' }}
+              />
+            </AnimatePresence>
+            <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-br from-white/5 via-transparent to-slate-950/45" />
           </motion.div>
 
           {/* Card 3 — bottom right */}
           <motion.div
-            className="relative overflow-hidden rounded-3xl"
+            className="relative overflow-hidden rounded-3xl bg-zinc-900"
             initial={reduce ? false : { opacity: 0, x: 48 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1], delay: 0.4 }}
           >
-            <img
-              src={img13}
-              alt="JH Interior workspace design"
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
+            <AnimatePresence mode="sync">
+              <motion.img
+                key={srcs[2]}
+                src={srcs[2]}
+                alt="JH Interior workspace design"
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 1.2, ease: 'easeInOut' }}
+              />
+            </AnimatePresence>
+            <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-black/65 via-transparent to-transparent" />
             {/* Floating project count badge */}
             <motion.div
-              className="absolute right-3 top-3 rounded-2xl border border-white/15 bg-black/70 px-3 py-2 text-center backdrop-blur-md"
+              className="absolute right-3 top-3 z-20 rounded-2xl border border-white/15 bg-black/70 px-3 py-2 text-center backdrop-blur-md"
               animate={reduce ? {} : { y: [0, -5, 0] }}
               transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 1.4 }}
             >
