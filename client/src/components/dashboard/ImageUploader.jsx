@@ -92,7 +92,6 @@ export default function ImageUploader({ folder = 'portfolio', value, onChange, c
         accept="image/*"
         className="hidden"
         onChange={handleChange}
-        onClick={(e) => e.stopPropagation()}
       />
 
       {/* Manual URL fallback */}

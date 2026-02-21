@@ -16,10 +16,10 @@ const inputCls = 'rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-
 
 function Field({ label, children }) {
   return (
-    <label className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-1.5">
       <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/35">{label}</span>
       {children}
-    </label>
+    </div>
   );
 }
 
