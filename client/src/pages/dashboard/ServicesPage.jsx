@@ -19,7 +19,7 @@ function Field({ label, children }) {
 }
 
 export default function ServicesPage() {
-  const { services, loading, addService, updateService, deleteService } = useServices();
+  const { services, loading, addService, updateService, deleteService, reorderServices } = useServices();
   const [form, setForm]         = useState(EMPTY);
   const [editing, setEditing]   = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -35,7 +35,10 @@ export default function ServicesPage() {
   function closeDrawer() { setDrawerOpen(false); setShowDiscard(false); }
   function tryClose() { if (isDirty()) setShowDiscard(true); else closeDrawer(); }
 
-  function openAdd() { setForm(EMPTY); initialFormRef.current = EMPTY; setEditing(null); setDrawerOpen(true); setError(null); }
+  function openAdd() {
+    const f = { ...EMPTY, sort_order: services.length };
+    setForm(f); initialFormRef.current = f; setEditing(null); setDrawerOpen(true); setError(null);
+  }
   function openEdit(row) {
     const f = { title: row.title, bullet_1: row.bullet_1, bullet_2: row.bullet_2, bullet_3: row.bullet_3, sort_order: row.sort_order };
     setForm(f); initialFormRef.current = f; setEditing(row.id); setDrawerOpen(true); setError(null);
@@ -53,10 +56,9 @@ export default function ServicesPage() {
   }
 
   const columns = [
-    { key: 'title',      label: 'Title' },
-    { key: 'bullet_1',   label: 'Bullet 1', mobileHide: true },
-    { key: 'bullet_2',   label: 'Bullet 2', mobileHide: true },
-    { key: 'sort_order', label: 'Order',    mobileHide: true },
+    { key: 'title',    label: 'Title' },
+    { key: 'bullet_1', label: 'Bullet 1', mobileHide: true },
+    { key: 'bullet_2', label: 'Bullet 2', mobileHide: true },
   ];
 
   return (
@@ -72,7 +74,7 @@ export default function ServicesPage() {
       </motion.div>
 
       {loading ? <p className="text-sm text-white/30">Loading…</p> : (
-        <DataTable columns={columns} rows={services} onEdit={openEdit} onDelete={deleteService} emptyText="No services yet." />
+        <DataTable columns={columns} rows={services} onEdit={openEdit} onDelete={deleteService} onReorder={reorderServices} emptyText="No services yet." />
       )}
 
       {drawerOpen && (
@@ -99,9 +101,6 @@ export default function ServicesPage() {
               </Field>
               <Field label="Bullet 3">
                 <input className={inputCls} value={form.bullet_3} onChange={s('bullet_3')} placeholder="Finish + furnishing playbooks" />
-              </Field>
-              <Field label="Sort Order">
-                <input type="number" className={inputCls} value={form.sort_order} onChange={(e) => setForm((f) => ({ ...f, sort_order: +e.target.value }))} />
               </Field>
               {error && <p className="text-sm text-red-400">{error}</p>}
               <div className="mt-auto flex gap-3">

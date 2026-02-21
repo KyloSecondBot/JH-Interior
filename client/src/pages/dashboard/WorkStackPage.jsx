@@ -26,7 +26,7 @@ function Field({ label, children }) {
 }
 
 export default function WorkStackPage() {
-  const { projects, loading, addProject, updateProject, deleteProject } = useWorkStack();
+  const { projects, loading, addProject, updateProject, deleteProject, reorderProjects } = useWorkStack();
   const [form, setForm]       = useState(EMPTY);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving]   = useState(false);
@@ -45,8 +45,9 @@ export default function WorkStackPage() {
   function tryClose() { if (isDirty()) setShowDiscard(true); else closeDrawer(); }
 
   function openAdd() {
-    setForm(EMPTY);
-    initialFormRef.current = EMPTY;
+    const f = { ...EMPTY, sort_order: projects.length };
+    setForm(f);
+    initialFormRef.current = f;
     setEditing(null);
     setDrawerOpen(true);
     setError(null);
@@ -81,13 +82,12 @@ export default function WorkStackPage() {
   }
 
   const columns = [
-    { key: 'image_url',  label: 'Image',    render: (v) => v ? <img src={v} alt="" className="h-8 w-12 rounded-lg object-cover" /> : <span className="text-white/25">—</span> },
-    { key: 'index',      label: '#' },
-    { key: 'title',      label: 'Title' },
-    { key: 'location',   label: 'Location', mobileHide: true },
-    { key: 'type',       label: 'Type',     mobileHide: true },
-    { key: 'metric',     label: 'Metric',   mobileHide: true },
-    { key: 'sort_order', label: 'Order',    mobileHide: true },
+    { key: 'image_url', label: 'Image',    render: (v) => v ? <img src={v} alt="" className="h-8 w-12 rounded-lg object-cover" /> : <span className="text-white/25">—</span> },
+    { key: 'index',     label: '#' },
+    { key: 'title',     label: 'Title' },
+    { key: 'location',  label: 'Location', mobileHide: true },
+    { key: 'type',      label: 'Type',     mobileHide: true },
+    { key: 'metric',    label: 'Metric',   mobileHide: true },
   ];
 
   return (
@@ -103,7 +103,7 @@ export default function WorkStackPage() {
       </motion.div>
 
       {loading ? <p className="text-sm text-white/30">Loading…</p> : (
-        <DataTable columns={columns} rows={projects} onEdit={openEdit} onDelete={deleteProject} emptyText="No work stack projects yet." />
+        <DataTable columns={columns} rows={projects} onEdit={openEdit} onDelete={deleteProject} onReorder={reorderProjects} emptyText="No work stack projects yet." />
       )}
 
       {drawerOpen && (
@@ -120,14 +120,9 @@ export default function WorkStackPage() {
             </div>
 
             <form onSubmit={handleSave} className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Index (e.g. 01)">
-                  <input className={inputCls} value={form.index} onChange={s('index')} placeholder="01" />
-                </Field>
-                <Field label="Sort Order">
-                  <input type="number" className={inputCls} value={form.sort_order} onChange={(e) => setForm((f) => ({ ...f, sort_order: +e.target.value }))} />
-                </Field>
-              </div>
+              <Field label="Index (e.g. 01)">
+                <input className={inputCls} value={form.index} onChange={s('index')} placeholder="01" />
+              </Field>
               <Field label="Title">
                 <input className={inputCls} value={form.title} required onChange={s('title')} placeholder="Halo Suites" />
               </Field>

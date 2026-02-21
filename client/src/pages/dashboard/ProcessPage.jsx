@@ -21,7 +21,7 @@ function Field({ label, children }) {
 }
 
 export default function ProcessPage() {
-  const { steps, loading, addStep, updateStep, deleteStep } = useProcess();
+  const { steps, loading, addStep, updateStep, deleteStep, reorderSteps } = useProcess();
   const [form, setForm]         = useState(EMPTY);
   const [editing, setEditing]   = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -37,7 +37,10 @@ export default function ProcessPage() {
   function closeDrawer() { setDrawerOpen(false); setShowDiscard(false); }
   function tryClose() { if (isDirty()) setShowDiscard(true); else closeDrawer(); }
 
-  function openAdd() { setForm(EMPTY); initialFormRef.current = EMPTY; setEditing(null); setDrawerOpen(true); setError(null); }
+  function openAdd() {
+    const f = { ...EMPTY, sort_order: steps.length };
+    setForm(f); initialFormRef.current = f; setEditing(null); setDrawerOpen(true); setError(null);
+  }
   function openEdit(row) {
     const f = { num: row.num, title_en: row.title_en, title_id: row.title_id, description: row.description, icon_name: row.icon_name, sort_order: row.sort_order };
     setForm(f); initialFormRef.current = f;
@@ -60,7 +63,6 @@ export default function ProcessPage() {
     { key: 'title_en',  label: 'Step (EN)' },
     { key: 'title_id',  label: 'Step (ID)', mobileHide: true },
     { key: 'icon_name', label: 'Icon',      mobileHide: true },
-    { key: 'sort_order',label: 'Order',     mobileHide: true },
   ];
 
   return (
@@ -76,7 +78,7 @@ export default function ProcessPage() {
       </motion.div>
 
       {loading ? <p className="text-sm text-white/30">Loading…</p> : (
-        <DataTable columns={columns} rows={steps} onEdit={openEdit} onDelete={deleteStep} emptyText="No process steps yet." />
+        <DataTable columns={columns} rows={steps} onEdit={openEdit} onDelete={deleteStep} onReorder={reorderSteps} emptyText="No process steps yet." />
       )}
 
       {drawerOpen && (
@@ -92,14 +94,9 @@ export default function ProcessPage() {
               <button onClick={tryClose} className="text-white/40 hover:text-white transition"><X className="h-5 w-5" /></button>
             </div>
             <form onSubmit={handleSave} className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Step Number (e.g. 01)">
-                  <input className={inputCls} value={form.num} onChange={s('num')} placeholder="01" />
-                </Field>
-                <Field label="Sort Order">
-                  <input type="number" className={inputCls} value={form.sort_order} onChange={(e) => setForm((f) => ({ ...f, sort_order: +e.target.value }))} />
-                </Field>
-              </div>
+              <Field label="Step Number (e.g. 01)">
+                <input className={inputCls} value={form.num} onChange={s('num')} placeholder="01" />
+              </Field>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Title (English)">
                   <input className={inputCls} value={form.title_en} required onChange={s('title_en')} placeholder="Price Estimation" />

@@ -54,5 +54,14 @@ export function useStats() {
     await fetchAll();
   }
 
-  return { stats, loading, error, refetch: fetchAll, addStat, updateStat, deleteStat };
+  async function reorderStats(orderedRows) {
+    const results = await Promise.all(
+      orderedRows.map((row, i) => supabase.from('studio_stats').update({ sort_order: i }).eq('id', row.id))
+    );
+    const err = results.find((r) => r.error)?.error;
+    if (err) throw err;
+    await fetchAll();
+  }
+
+  return { stats, loading, error, refetch: fetchAll, addStat, updateStat, deleteStat, reorderStats };
 }

@@ -20,7 +20,7 @@ function Field({ label, children }) {
 const inputCls = 'rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder-white/25 outline-none focus:border-amber-400/50 transition';
 
 export default function TestimonialsPage() {
-  const { testimonials, loading, addTestimonial, updateTestimonial, deleteTestimonial } = useTestimonials();
+  const { testimonials, loading, addTestimonial, updateTestimonial, deleteTestimonial, reorderTestimonials } = useTestimonials();
   const [form, setForm]     = useState(EMPTY);
   const [editing, setEditing] = useState(null); // id being edited
   const [saving, setSaving]   = useState(false);
@@ -35,8 +35,9 @@ export default function TestimonialsPage() {
   function tryClose() { if (isDirty()) setShowDiscard(true); else closeDrawer(); }
 
   function openAdd() {
-    setForm(EMPTY);
-    initialFormRef.current = EMPTY;
+    const f = { ...EMPTY, sort_order: testimonials.length };
+    setForm(f);
+    initialFormRef.current = f;
     setEditing(null);
     setDrawerOpen(true);
     setError(null);
@@ -72,7 +73,6 @@ export default function TestimonialsPage() {
     { key: 'name',  label: 'Name' },
     { key: 'title', label: 'Title' },
     { key: 'quote', label: 'Quote', render: (v) => <span className="line-clamp-2 max-w-xs">{v}</span> },
-    { key: 'sort_order', label: 'Order' },
   ];
 
   return (
@@ -104,6 +104,7 @@ export default function TestimonialsPage() {
           rows={testimonials}
           onEdit={openEdit}
           onDelete={deleteTestimonial}
+          onReorder={reorderTestimonials}
           emptyText="No testimonials yet. Add your first one."
         />
       )}
@@ -136,10 +137,6 @@ export default function TestimonialsPage() {
               <Field label="Quote">
                 <textarea className={`${inputCls} min-h-[120px] resize-y`} value={form.quote} required onChange={(e) => setForm({ ...form, quote: e.target.value })} placeholder="They choreographed every guest touchpoint…" />
               </Field>
-              <Field label="Sort Order">
-                <input type="number" className={inputCls} value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: +e.target.value })} />
-              </Field>
-
               {error && <p className="text-sm text-red-400">{error}</p>}
 
               <div className="mt-auto flex gap-3">

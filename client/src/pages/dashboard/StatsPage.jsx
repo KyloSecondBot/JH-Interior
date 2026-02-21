@@ -20,7 +20,7 @@ function Field({ label, children }) {
 }
 
 export default function StatsPage() {
-  const { stats, loading, addStat, updateStat, deleteStat } = useStats();
+  const { stats, loading, addStat, updateStat, deleteStat, reorderStats } = useStats();
   const [form, setForm]       = useState(EMPTY);
   const [editing, setEditing] = useState(null);
   const [saving, setSaving]   = useState(false);
@@ -35,8 +35,9 @@ export default function StatsPage() {
   function tryClose() { if (isDirty()) setShowDiscard(true); else closeDrawer(); }
 
   function openAdd() {
-    setForm(EMPTY);
-    initialFormRef.current = EMPTY;
+    const f = { ...EMPTY, sort_order: stats.length };
+    setForm(f);
+    initialFormRef.current = f;
     setEditing(null);
     setDrawerOpen(true);
     setError(null);
@@ -69,10 +70,9 @@ export default function StatsPage() {
   }
 
   const columns = [
-    { key: 'label',      label: 'Label' },
-    { key: 'value',      label: 'Value' },
-    { key: 'suffix',     label: 'Suffix', render: (v) => v || <span className="text-white/25">—</span> },
-    { key: 'sort_order', label: 'Order' },
+    { key: 'label',  label: 'Label' },
+    { key: 'value',  label: 'Value' },
+    { key: 'suffix', label: 'Suffix', render: (v) => v || <span className="text-white/25">—</span> },
   ];
 
   return (
@@ -91,7 +91,7 @@ export default function StatsPage() {
       {loading ? (
         <p className="text-sm text-white/30">Loading…</p>
       ) : (
-        <DataTable columns={columns} rows={stats} onEdit={openEdit} onDelete={deleteStat} emptyText="No stats yet." />
+        <DataTable columns={columns} rows={stats} onEdit={openEdit} onDelete={deleteStat} onReorder={reorderStats} emptyText="No stats yet." />
       )}
 
       {drawerOpen && (
@@ -117,10 +117,6 @@ export default function StatsPage() {
               <Field label="Suffix (optional)">
                 <input className={inputCls} value={form.suffix} onChange={(e) => setForm({ ...form, suffix: e.target.value })} placeholder="% or ' wks'" />
               </Field>
-              <Field label="Sort Order">
-                <input type="number" className={inputCls} value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: +e.target.value })} />
-              </Field>
-
               {error && <p className="text-sm text-red-400">{error}</p>}
 
               <div className="mt-auto flex gap-3">

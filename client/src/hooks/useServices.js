@@ -44,5 +44,14 @@ export function useServices() {
     await fetchAll();
   }
 
-  return { services, loading, error, refetch: fetchAll, addService, updateService, deleteService };
+  async function reorderServices(orderedRows) {
+    const results = await Promise.all(
+      orderedRows.map((row, i) => supabase.from('services').update({ sort_order: i }).eq('id', row.id))
+    );
+    const err = results.find((r) => r.error)?.error;
+    if (err) throw err;
+    await fetchAll();
+  }
+
+  return { services, loading, error, refetch: fetchAll, addService, updateService, deleteService, reorderServices };
 }

@@ -129,10 +129,29 @@ export function usePortfolio() {
     await fetchAll();
   }
 
+  async function reorderProjects(orderedRows) {
+    const results = await Promise.all(
+      orderedRows.map((row, i) => supabase.from('portfolio_projects').update({ sort_order: i }).eq('id', row.id))
+    );
+    const err = results.find((r) => r.error)?.error;
+    if (err) throw err;
+    await fetchAll();
+  }
+
+  async function reorderGallery(orderedRows) {
+    const results = await Promise.all(
+      orderedRows.map((row, i) => supabase.from('portfolio_gallery').update({ sort_order: i }).eq('id', row.id))
+    );
+    const err = results.find((r) => r.error)?.error;
+    if (err) throw err;
+    await fetchAll();
+  }
+
   return {
     projects, gallery, loading, error, refetch: fetchAll,
     addProject, updateProject, deleteProject,
     addGalleryItem, updateGalleryItem, deleteGalleryItem,
     addPhoto, deletePhoto,
+    reorderProjects, reorderGallery,
   };
 }

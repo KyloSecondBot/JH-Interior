@@ -44,5 +44,14 @@ export function useProcess() {
     await fetchAll();
   }
 
-  return { steps, loading, error, refetch: fetchAll, addStep, updateStep, deleteStep };
+  async function reorderSteps(orderedRows) {
+    const results = await Promise.all(
+      orderedRows.map((row, i) => supabase.from('process_steps').update({ sort_order: i }).eq('id', row.id))
+    );
+    const err = results.find((r) => r.error)?.error;
+    if (err) throw err;
+    await fetchAll();
+  }
+
+  return { steps, loading, error, refetch: fetchAll, addStep, updateStep, deleteStep, reorderSteps };
 }

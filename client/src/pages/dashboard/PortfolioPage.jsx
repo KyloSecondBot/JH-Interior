@@ -354,6 +354,7 @@ export default function PortfolioPage() {
     addProject, updateProject, deleteProject,
     addGalleryItem, updateGalleryItem, deleteGalleryItem,
     addPhoto, deletePhoto,
+    reorderProjects, reorderGallery,
   } = usePortfolio();
 
   const [tab, setTab] = useState('projects');
@@ -392,7 +393,8 @@ export default function PortfolioPage() {
 
   /* ── Project handlers ── */
   function openAddProj() {
-    setProjForm(EMPTY_PROJECT); initialProjRef.current = EMPTY_PROJECT;
+    const f = { ...EMPTY_PROJECT, sort_order: projects.length };
+    setProjForm(f); initialProjRef.current = f;
     setEditingProj(null);
     setProjDrawer(true);
     setProjError(null);
@@ -429,7 +431,8 @@ export default function PortfolioPage() {
 
   /* ── Gallery handlers ── */
   function openAddGal() {
-    setGalForm(EMPTY_GALLERY); initialGalRef.current = EMPTY_GALLERY;
+    const f = { ...EMPTY_GALLERY, sort_order: gallery.length };
+    setGalForm(f); initialGalRef.current = f;
     setEditingGal(null);
     setGalDrawer(true);
     setGalError(null);
@@ -482,14 +485,12 @@ export default function PortfolioPage() {
         );
       },
     },
-    { key: 'sort_order', label: 'Order', mobileHide: true },
   ];
 
   const galColumns = [
     { key: 'image_url', label: 'Image',   render: (v) => v ? <img src={v} alt="" className="h-8 w-12 rounded-lg object-cover" /> : <span className="text-white/25">—</span> },
     { key: 'title',     label: 'Title' },
     { key: 'caption',   label: 'Caption', mobileHide: true },
-    { key: 'sort_order',label: 'Order',   mobileHide: true },
   ];
 
   return (
@@ -518,9 +519,9 @@ export default function PortfolioPage() {
       {loading ? (
         <p className="text-sm text-white/30">Loading…</p>
       ) : tab === 'projects' ? (
-        <DataTable columns={projColumns} rows={projects} onEdit={openEditProj} onDelete={deleteProject} emptyText="No portfolio projects yet." />
+        <DataTable columns={projColumns} rows={projects} onEdit={openEditProj} onDelete={deleteProject} onReorder={reorderProjects} emptyText="No portfolio projects yet." />
       ) : (
-        <DataTable columns={galColumns} rows={gallery} onEdit={openEditGal} onDelete={deleteGalleryItem} emptyText="No gallery items yet." />
+        <DataTable columns={galColumns} rows={gallery} onEdit={openEditGal} onDelete={deleteGalleryItem} onReorder={reorderGallery} emptyText="No gallery items yet." />
       )}
 
       {/* ── Project drawer ── */}
@@ -562,10 +563,6 @@ export default function PortfolioPage() {
           <Field label="Overlay Gradient (Tailwind)">
             <input className={inputCls} value={projForm.overlay_gradient} onChange={(e) => setProjForm((f) => ({ ...f, overlay_gradient: e.target.value }))} placeholder="from-black/80 via-black/60 to-black/90" />
           </Field>
-          <Field label="Sort Order">
-            <input type="number" className={inputCls} value={projForm.sort_order} onChange={(e) => setProjForm((f) => ({ ...f, sort_order: +e.target.value }))} />
-          </Field>
-
           {/* Photos CTA — only when editing an existing project */}
           {editingProj && (() => {
             const proj = projects.find((p) => p.id === editingProj);
@@ -612,10 +609,6 @@ export default function PortfolioPage() {
           <Field label="Tone Gradient (Tailwind)">
             <input className={inputCls} value={galForm.tone_gradient} onChange={(e) => setGalForm((f) => ({ ...f, tone_gradient: e.target.value }))} placeholder="from-black/60 via-black/35 to-black/70" />
           </Field>
-          <Field label="Sort Order">
-            <input type="number" className={inputCls} value={galForm.sort_order} onChange={(e) => setGalForm((f) => ({ ...f, sort_order: +e.target.value }))} />
-          </Field>
-
           {galError && <p className="text-sm text-red-400">{galError}</p>}
           <div className="mt-auto flex gap-3">
             <button type="button" onClick={tryCloseGal} className="flex-1 rounded-xl border border-white/10 bg-white/5 py-2.5 text-sm font-medium text-white/70 transition hover:bg-white/10">Cancel</button>

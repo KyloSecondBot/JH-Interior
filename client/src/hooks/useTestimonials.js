@@ -54,5 +54,14 @@ export function useTestimonials() {
     await fetchAll();
   }
 
-  return { testimonials, loading, error, refetch: fetchAll, addTestimonial, updateTestimonial, deleteTestimonial };
+  async function reorderTestimonials(orderedRows) {
+    const results = await Promise.all(
+      orderedRows.map((row, i) => supabase.from('testimonials').update({ sort_order: i }).eq('id', row.id))
+    );
+    const err = results.find((r) => r.error)?.error;
+    if (err) throw err;
+    await fetchAll();
+  }
+
+  return { testimonials, loading, error, refetch: fetchAll, addTestimonial, updateTestimonial, deleteTestimonial, reorderTestimonials };
 }
